@@ -1,0 +1,272 @@
+/* ==========================================================================
+   刘鼻涕的思考花园 - 样式表
+   清新 · 优雅 · 文艺 · 衬线体
+   ========================================================================== */
+
+/* 全局设置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* 浅色调色板 - 优雅温柔 */
+    --color-bg: #fdfcfb;
+    --color-text: #3a3a3a;
+    --color-text-light: #737373;
+    --color-accent: #8b7355;
+    --color-accent-light: #b59a7e;
+    --color-border: #e8e4df;
+    --color-card: #ffffff;
+    --color-tag: #f5f1ed;
+    
+    /* 字体 */
+    --font-serif-zh: "Noto Serif SC", "Songti SC", serif;
+    --font-serif-en: "Crimson Pro", "Georgia", serif;
+    --font-serif: var(--font-serif-zh), var(--font-serif-en);
+    
+    /* 间距 */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2.5rem;
+    --spacing-xl: 4rem;
+}
+
+body {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+/* 头部 */
+.site-header {
+    padding: var(--spacing-xl) 0 var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border);
+    text-align: center;
+}
+
+.site-title {
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+}
+
+.site-subtitle {
+    font-size: 0.95rem;
+    color: var(--color-text-light);
+    font-weight: 300;
+    font-style: italic;
+}
+
+/* 简介 */
+.intro {
+    padding: var(--spacing-xl) 0;
+    text-align: center;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.intro-text {
+    font-size: 1.05rem;
+    line-height: 2;
+    color: var(--color-text-light);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* 卡片网格 */
+.cards-grid {
+    padding: var(--spacing-xl) 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+/* 思考卡片 */
+.thought-card {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    padding: var(--spacing-lg);
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.thought-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.card-date {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-sm);
+    font-style: italic;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.4;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.card-text {
+    color: var(--color-text);
+    line-height: 1.8;
+}
+
+.card-quote {
+    border-left: 3px solid var(--color-accent-light);
+    padding-left: var(--spacing-md);
+    font-style: italic;
+    color: var(--color-text);
+    line-height: 1.9;
+}
+
+.quote-author {
+    display: block;
+    margin-top: var(--spacing-xs);
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+    font-style: normal;
+}
+
+.card-insight {
+    background: var(--color-tag);
+    padding: var(--spacing-md);
+    border-left: 3px solid var(--color-accent);
+    font-style: italic;
+    color: var(--color-text);
+    line-height: 1.9;
+}
+
+.card-blockquote {
+    border-left: 3px solid var(--color-accent-light);
+    padding-left: var(--spacing-md);
+    font-style: italic;
+    color: var(--color-text-light);
+    line-height: 1.9;
+}
+
+.card-blockquote strong {
+    color: var(--color-accent);
+    font-weight: 500;
+}
+
+.card-list {
+    padding-left: var(--spacing-md);
+    list-style-position: outside;
+}
+
+.card-list li {
+    margin-bottom: var(--spacing-xs);
+    padding-left: var(--spacing-xs);
+}
+
+.card-list strong {
+    color: var(--color-accent);
+    font-weight: 400;
+}
+
+.card-tag {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    background: var(--color-tag);
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--color-border);
+    letter-spacing: 0.05em;
+}
+
+/* 底部 */
+.site-footer {
+    padding: var(--spacing-xl) 0;
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+    margin-top: var(--spacing-xl);
+}
+
+.footer-text {
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-sm);
+}
+
+.footer-text a {
+    color: var(--color-accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease;
+}
+
+.footer-text a:hover {
+    border-bottom-color: var(--color-accent);
+}
+
+.footer-quote {
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--color-text-light);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    body {
+        font-size: 16px;
+    }
+    
+    .site-title {
+        font-size: 1.5rem;
+    }
+    
+    .card-title {
+        font-size: 1.25rem;
+    }
+    
+    .thought-card {
+        padding: var(--spacing-md);
+    }
+    
+    .card-tag {
+        position: static;
+        display: inline-block;
+        margin-top: var(--spacing-md);
+    }
+}
+
+/* 打印样式 */
+@media print {
+    .site-header,
+    .site-footer {
+        border: none;
+    }
+    
+    .thought-card {
+        page-break-inside: avoid;
+        border: 1px solid #000;
+    }
+}
