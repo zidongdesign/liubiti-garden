@@ -39,6 +39,7 @@ class Garden {
     initDateNav() {
         const dateBtns = document.querySelectorAll('.date-btn');
         const cards = document.querySelectorAll('.thought-card');
+        const tabContent = document.getElementById('cards-tab');
         
         dateBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -54,8 +55,11 @@ class Garden {
                 if (targetCard) {
                     targetCard.classList.add('active');
                     
-                    // 滚动到卡片顶部
-                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // 滚动到卡片顶部（在 tab-content 内部滚动）
+                    tabContent.scrollTo({
+                        top: targetCard.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
                 }
                 
                 // 滚动日期导航到当前按钮
