@@ -104,12 +104,11 @@ body {
     font-size: 1.1rem;
 }
 
-/* 卡片滑动容器 */
+/* 卡片滑动容器 - 移动端优先 */
 .cards-slider {
     position: relative;
-    width: 100%;
-    max-width: 700px;
-    margin: 0 auto;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
     padding: var(--spacing-md) 0 var(--spacing-xl);
     overflow: hidden;
 }
@@ -121,18 +120,27 @@ body {
     width: 100%;
 }
 
-/* 思考卡片 */
+/* 思考卡片 - 移动端优先 */
 .thought-card {
-    min-width: 100%;
+    min-width: 100vw;
     flex-shrink: 0;
     background: var(--color-card);
     border: 1px solid var(--color-border);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
     position: relative;
     opacity: 0.3;
     transform: scale(0.95);
     transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+}
+
+/* 内边距调整 */
+.thought-card > * {
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 var(--spacing-md);
 }
 
 .thought-card.active {
@@ -250,46 +258,52 @@ body {
     letter-spacing: 0.05em;
 }
 
-/* 导航按钮 */
+/* 导航按钮 - 移动端隐藏，桌面端显示 */
 .nav-button {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
-    color: var(--color-accent);
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    font-size: 2rem;
-    line-height: 1;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-serif-en);
-    font-weight: 300;
+    display: none;
 }
 
-.nav-button:hover {
-    background: var(--color-accent);
-    color: var(--color-card);
-    border-color: var(--color-accent);
-    transform: translateY(-50%) scale(1.1);
-}
-
-.nav-button:active {
-    transform: translateY(-50%) scale(0.95);
-}
-
-.nav-button.prev {
-    left: -24px;
-}
-
-.nav-button.next {
-    right: -24px;
+@media (min-width: 768px) {
+    .nav-button {
+        display: flex;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--color-card);
+        border: 1px solid var(--color-border);
+        color: var(--color-accent);
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        font-size: 2rem;
+        line-height: 1;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 10;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-serif-en);
+        font-weight: 300;
+    }
+    
+    .nav-button:hover {
+        background: var(--color-accent);
+        color: var(--color-card);
+        border-color: var(--color-accent);
+        transform: translateY(-50%) scale(1.1);
+    }
+    
+    .nav-button:active {
+        transform: translateY(-50%) scale(0.95);
+    }
+    
+    .nav-button.prev {
+        left: -24px;
+    }
+    
+    .nav-button.next {
+        right: -24px;
+    }
 }
 
 /* 导航点 */
@@ -353,8 +367,25 @@ body {
     color: var(--color-text-light);
 }
 
-/* 响应式 */
-@media (max-width: 768px) {
+/* 响应式 - 桌面端优化 */
+@media (min-width: 768px) {
+    .cards-slider {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .thought-card {
+        min-width: 700px;
+        padding: var(--spacing-lg);
+    }
+    
+    .thought-card > * {
+        padding: 0;
+    }
+}
+
+@media (max-width: 767px) {
     body {
         font-size: 16px;
     }
@@ -365,24 +396,6 @@ body {
     
     .card-title {
         font-size: 1.25rem;
-    }
-    
-    .thought-card {
-        padding: var(--spacing-md);
-    }
-    
-    .nav-button {
-        width: 40px;
-        height: 40px;
-        font-size: 1.5rem;
-    }
-    
-    .nav-button.prev {
-        left: -12px;
-    }
-    
-    .nav-button.next {
-        right: -12px;
     }
     
     .card-content {
