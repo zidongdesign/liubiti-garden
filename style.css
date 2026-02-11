@@ -1,6 +1,6 @@
 /* ==========================================================================
    刘鼻涕的思考花园 - 样式表
-   清新 · 优雅 · 文艺 · 衬线体
+   清新 · 优雅 · 文艺 · 衬线体 · 横向卡片轮播
    ========================================================================== */
 
 /* 全局设置 */
@@ -11,7 +11,7 @@
 }
 
 :root {
-    /* 浅色调色板 - 优雅温柔 */
+    /* 浅色调色板 */
     --color-bg: #fdfcfb;
     --color-text: #3a3a3a;
     --color-text-light: #737373;
@@ -43,6 +43,7 @@ body {
     font-weight: 300;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
 }
 
 .container {
@@ -75,7 +76,7 @@ body {
 
 /* 简介 */
 .intro {
-    padding: var(--spacing-xl) 0;
+    padding: var(--spacing-xl) 0 var(--spacing-lg);
     text-align: center;
     border-bottom: 1px solid var(--color-border);
 }
@@ -88,26 +89,53 @@ body {
     margin: 0 auto;
 }
 
-/* 卡片网格 */
-.cards-grid {
-    padding: var(--spacing-xl) 0;
+/* 卡片计数器 */
+.card-counter {
+    text-align: center;
+    padding: var(--spacing-lg) 0 var(--spacing-sm);
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+    font-style: italic;
+}
+
+.current-card {
+    color: var(--color-accent);
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+/* 卡片滑动容器 */
+.cards-slider {
+    position: relative;
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: var(--spacing-md) 0 var(--spacing-xl);
+}
+
+.cards-track {
     display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xl);
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
 }
 
 /* 思考卡片 */
 .thought-card {
+    min-width: 100%;
     background: var(--color-card);
     border: 1px solid var(--color-border);
     padding: var(--spacing-lg);
     position: relative;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    opacity: 0.3;
+    transform: scale(0.95);
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-.thought-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+.thought-card.active {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .card-date {
@@ -130,6 +158,23 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: var(--spacing-xs);
+}
+
+/* 自定义滚动条 */
+.card-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.card-content::-webkit-scrollbar-track {
+    background: var(--color-tag);
+}
+
+.card-content::-webkit-scrollbar-thumb {
+    background: var(--color-accent-light);
+    border-radius: 2px;
 }
 
 .card-text {
@@ -202,6 +247,78 @@ body {
     letter-spacing: 0.05em;
 }
 
+/* 导航按钮 */
+.nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    color: var(--color-accent);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-serif-en);
+    font-weight: 300;
+}
+
+.nav-button:hover {
+    background: var(--color-accent);
+    color: var(--color-card);
+    border-color: var(--color-accent);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.nav-button:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.nav-button.prev {
+    left: -24px;
+}
+
+.nav-button.next {
+    right: -24px;
+}
+
+/* 导航点 */
+.dots-nav {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) 0;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-border);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.dot:hover {
+    background: var(--color-accent-light);
+    transform: scale(1.2);
+}
+
+.dot.active {
+    background: var(--color-accent);
+    width: 24px;
+    border-radius: 4px;
+}
+
 /* 底部 */
 .site-footer {
     padding: var(--spacing-xl) 0;
@@ -251,22 +368,36 @@ body {
         padding: var(--spacing-md);
     }
     
-    .card-tag {
-        position: static;
-        display: inline-block;
-        margin-top: var(--spacing-md);
+    .nav-button {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+    }
+    
+    .nav-button.prev {
+        left: -12px;
+    }
+    
+    .nav-button.next {
+        right: -12px;
+    }
+    
+    .card-content {
+        max-height: 350px;
     }
 }
 
-/* 打印样式 */
-@media print {
-    .site-header,
-    .site-footer {
-        border: none;
-    }
-    
-    .thought-card {
-        page-break-inside: avoid;
-        border: 1px solid #000;
+/* 键盘导航提示 */
+@media (hover: hover) {
+    .cards-slider::after {
+        content: '← →  键盘导航';
+        position: absolute;
+        bottom: -2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.8rem;
+        color: var(--color-text-light);
+        opacity: 0.5;
+        font-style: italic;
     }
 }
