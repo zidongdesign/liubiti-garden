@@ -50,11 +50,13 @@ class Garden {
             }
             
             if (item.type === 'insight') {
-                return `<p class="card-insight">${item.text}</p>`;
+                const text = item.text.replace(/\n/g, '<br>');
+                return `<p class="card-insight">${text}</p>`;
             }
             
             if (item.type === 'quote') {
-                return `<blockquote class="card-blockquote">${item.text}</blockquote>`;
+                const text = item.text.replace(/\n/g, '<br>');
+                return `<blockquote class="card-blockquote">${text}</blockquote>`;
             }
             
             if (item.type === 'list') {
