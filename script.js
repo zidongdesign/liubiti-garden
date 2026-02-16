@@ -50,12 +50,14 @@ class Garden {
             }
             
             if (item.type === 'insight') {
-                const text = item.text.replace(/\n/g, '<br>');
+                // Replace both literal \n and actual newlines with <br>
+                const text = item.text.replace(/\\n/g, '<br>').replace(/\n/g, '<br>');
                 return `<p class="card-insight">${text}</p>`;
             }
             
             if (item.type === 'quote') {
-                const text = item.text.replace(/\n/g, '<br>');
+                // Replace both literal \n and actual newlines with <br>
+                const text = item.text.replace(/\\n/g, '<br>').replace(/\n/g, '<br>');
                 return `<blockquote class="card-blockquote">${text}</blockquote>`;
             }
             
