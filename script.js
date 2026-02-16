@@ -1,20 +1,97 @@
-// 刘鼻涕的思考花园 - 简化交互版本
-// 顶部 Tab + 底部日期导航
+// 刘鼻涕的思考花园 - 数据驱动版本
+// JSON 数据 + 动态渲染
 
 class Garden {
     constructor() {
+        this.thoughts = [];
+        this.currentThought = null;
         this.init();
     }
     
-    init() {
-        // 顶部 Tab 切换
+    async init() {
+        // 加载数据
+        await this.loadThoughts();
+        
+        // 渲染卡片和导航
+        this.renderCards();
+        this.renderDateNav();
+        
+        // 初始化交互
         this.initTopTabs();
-        
-        // 底部日期导航
         this.initDateNav();
-        
-        // 页面加载动画
         this.initPageAnimation();
+        
+        // 默认激活最新的卡片
+        this.activateLatest();
+    }
+    
+    async loadThoughts() {
+        try {
+            const response = await fetch('thoughts.json');
+            const data = await response.json();
+            this.thoughts = data.thoughts;
+        } catch (error) {
+            console.error('Failed to load thoughts:', error);
+            this.thoughts = [];
+        }
+    }
+    
+    renderCards() {
+        const container = document.querySelector('.card-display');
+        if (!container) return;
+        
+        container.innerHTML = this.thoughts.map(thought => this.createCardHTML(thought)).join('');
+    }
+    
+    createCardHTML(thought) {
+        const contentHTML = thought.content.map(item => {
+            if (typeof item === 'string') {
+                return `<p class="card-text">${item}</p>`;
+            }
+            
+            if (item.type === 'insight') {
+                return `<p class="card-insight">${item.text}</p>`;
+            }
+            
+            if (item.type === 'quote') {
+                return `<blockquote class="card-blockquote">${item.text}</blockquote>`;
+            }
+            
+            if (item.type === 'list') {
+                const listItems = item.items.map(li => `<li>${li}</li>`).join('');
+                return `<ul class="card-list">${listItems}</ul>`;
+            }
+            
+            return '';
+        }).join('');
+        
+        return `
+            <article class="thought-card" data-date="${thought.id}">
+                <time class="card-date">${thought.dateLabel}</time>
+                <h2 class="card-title">${thought.title}</h2>
+                <div class="card-content">
+                    ${contentHTML}
+                </div>
+                <span class="card-tag">${thought.tag}</span>
+            </article>
+        `;
+    }
+    
+    renderDateNav() {
+        const nav = document.querySelector('.date-nav');
+        if (!nav) return;
+        
+        nav.innerHTML = this.thoughts.map(thought => {
+            const dateShort = thought.dateLabel.split('·')[0].trim().replace('2026 年 ', '');
+            const titleShort = thought.title.length > 15 ? thought.title.substring(0, 15) + '...' : thought.title;
+            
+            return `
+                <button class="date-btn" data-date="${thought.id}">
+                    <span class="date-label">${dateShort}</span>
+                    <span class="date-title">${titleShort}</span>
+                </button>
+            `;
+        }).join('');
     }
     
     initTopTabs() {
@@ -66,6 +143,17 @@ class Garden {
                 btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
             });
         });
+    }
+    
+    activateLatest() {
+        // 默认激活第一个（最新的）卡片和日期
+        const firstCard = document.querySelector('.thought-card');
+        const firstBtn = document.querySelector('.date-btn');
+        
+        if (firstCard && firstBtn) {
+            firstCard.classList.add('active');
+            firstBtn.classList.add('active');
+        }
     }
     
     initPageAnimation() {
