@@ -86,11 +86,30 @@ body {
     display: none;
     height: calc(100vh - 80px); /* 顶部tab约35px + 底部日期约45px */
     overflow-y: auto;
+    overflow-x: hidden;
     padding-bottom: var(--spacing-md); /* 底部留白，确保能完全滚动 */
 }
 
 .tab-content.active {
     display: block;
+}
+
+/* 自定义滚动条样式 */
+.tab-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.tab-content::-webkit-scrollbar-track {
+    background: var(--color-border);
+}
+
+.tab-content::-webkit-scrollbar-thumb {
+    background: var(--color-accent-light);
+    border-radius: 4px;
+}
+
+.tab-content::-webkit-scrollbar-thumb:hover {
+    background: var(--color-accent);
 }
 
 .container {
