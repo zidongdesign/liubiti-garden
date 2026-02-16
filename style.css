@@ -43,9 +43,18 @@ body {
     font-weight: 300;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    height: 100vh;
+    overflow: hidden; /* 禁止 body 滚动 */
+    display: flex;
+    flex-direction: column;
 }
 
-/* 顶部 Tab 导航 - 极简版本 */
+html {
+    height: 100%;
+    overflow: hidden; /* 禁止 html 滚动 */
+}
+
+/* 顶部 Tab 导航 - 固定在顶部 */
 .top-tabs {
     display: flex;
     justify-content: center;
@@ -53,9 +62,7 @@ body {
     padding: 0.4rem 0;
     border-bottom: 1px solid var(--color-border);
     background: var(--color-bg);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    flex-shrink: 0; /* 不压缩 */
 }
 
 .tab-btn {
@@ -81,17 +88,29 @@ body {
     color: var(--color-accent);
 }
 
-/* Tab 内容 */
+/* 主容器 - flexbox 布局 */
+.container {
+    flex: 1; /* 占据剩余空间 */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Tab 内容区域 - 中间滚动区域 */
 .tab-content {
     display: none;
-    height: calc(100vh - 80px); /* 顶部tab约35px + 底部日期约45px */
+    flex: 1; /* 占据剩余空间 */
     overflow-y: auto;
     overflow-x: hidden;
-    padding-bottom: var(--spacing-md); /* 底部留白，确保能完全滚动 */
+    padding: 0 var(--spacing-md) var(--spacing-md);
 }
 
 .tab-content.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
 }
 
 /* 自定义滚动条样式 */
@@ -110,12 +129,6 @@ body {
 
 .tab-content::-webkit-scrollbar-thumb:hover {
     background: var(--color-accent);
-}
-
-.container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 var(--spacing-md);
 }
 
 /* 卡片展示区 */
@@ -241,12 +254,8 @@ body {
     letter-spacing: 0.05em;
 }
 
-/* 底部日期导航 - 再压缩 */
+/* 底部日期导航 - 固定在底部 */
 .date-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
     display: flex;
     gap: 0.5rem;
     overflow-x: auto;
@@ -256,7 +265,7 @@ body {
     border-top: 1px solid var(--color-border);
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
-    z-index: 99;
+    flex-shrink: 0; /* 不压缩 */
 }
 
 .date-nav::-webkit-scrollbar {
