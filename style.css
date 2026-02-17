@@ -55,13 +55,40 @@ html {
     overflow: hidden;
 }
 
+/* 顶部日期导航 */
+.date-nav {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.5rem var(--spacing-md);
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    flex-shrink: 0;
+}
+
+.date-nav::-webkit-scrollbar {
+    height: 3px;
+}
+
+.date-nav::-webkit-scrollbar-track {
+    background: var(--color-tag);
+}
+
+.date-nav::-webkit-scrollbar-thumb {
+    background: var(--color-accent-light);
+    border-radius: 2px;
+}
+
 /* 卡片展示区 - 主滚动区域 */
 .card-display {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
     padding: var(--spacing-md);
-    padding-bottom: 0;
+    padding-bottom: var(--spacing-md);
 }
 
 /* 自定义滚动条 */
@@ -202,34 +229,7 @@ html {
     letter-spacing: 0.05em;
 }
 
-/* 底部日期导航 - 固定在底部，支持 safe area */
-.date-nav {
-    display: flex;
-    gap: 0.5rem;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 0.5rem var(--spacing-md);
-    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
-    background: var(--color-bg);
-    border-top: 1px solid var(--color-border);
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-    flex-shrink: 0;
-}
-
-.date-nav::-webkit-scrollbar {
-    height: 3px;
-}
-
-.date-nav::-webkit-scrollbar-track {
-    background: var(--color-tag);
-}
-
-.date-nav::-webkit-scrollbar-thumb {
-    background: var(--color-accent-light);
-    border-radius: 2px;
-}
-
+/* 日期按钮样式 */
 .date-btn {
     flex-shrink: 0;
     background: var(--color-card);
