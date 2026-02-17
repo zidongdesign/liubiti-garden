@@ -1,5 +1,4 @@
-// 刘鼻涕的思考花园 - 数据驱动版本
-// JSON 数据 + 动态渲染
+// 刘鼻涕的思考花园 - 简化版本（去掉顶部 tab）
 
 class Garden {
     constructor() {
@@ -17,7 +16,6 @@ class Garden {
         this.renderDateNav();
         
         // 初始化交互
-        this.initTopTabs();
         this.initDateNav();
         this.initPageAnimation();
         
@@ -50,13 +48,11 @@ class Garden {
             }
             
             if (item.type === 'insight') {
-                // Replace both literal \n and actual newlines with <br>
                 const text = item.text.replace(/\\n/g, '<br>').replace(/\n/g, '<br>');
                 return `<p class="card-insight">${text}</p>`;
             }
             
             if (item.type === 'quote') {
-                // Replace both literal \n and actual newlines with <br>
                 const text = item.text.replace(/\\n/g, '<br>').replace(/\n/g, '<br>');
                 return `<blockquote class="card-blockquote">${text}</blockquote>`;
             }
@@ -85,7 +81,8 @@ class Garden {
         const nav = document.querySelector('.date-nav');
         if (!nav) return;
         
-        nav.innerHTML = this.thoughts.map(thought => {
+        // 日期按钮
+        const dateButtons = this.thoughts.map(thought => {
             const dateShort = thought.dateLabel.split('·')[0].trim().replace('2026 年 ', '');
             const titleShort = thought.title.length > 15 ? thought.title.substring(0, 15) + '...' : thought.title;
             
@@ -96,35 +93,45 @@ class Garden {
                 </button>
             `;
         }).join('');
-    }
-    
-    initTopTabs() {
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
         
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const targetTab = btn.dataset.tab;
-                
-                // 移除所有激活状态
-                tabBtns.forEach(b => b.classList.remove('active'));
-                tabContents.forEach(c => c.classList.remove('active'));
-                
-                // 激活当前 Tab
-                btn.classList.add('active');
-                document.getElementById(`${targetTab}-tab`).classList.add('active');
-            });
-        });
+        // 添加"关于"按钮
+        const aboutButton = `
+            <button class="date-btn about-btn" data-page="about">
+                <span class="date-title">关于</span>
+            </button>
+        `;
+        
+        nav.innerHTML = dateButtons + aboutButton;
     }
     
     initDateNav() {
         const dateBtns = document.querySelectorAll('.date-btn');
         const cards = document.querySelectorAll('.thought-card');
-        const tabContent = document.getElementById('cards-tab');
+        const cardDisplay = document.querySelector('.card-display');
+        const aboutPage = document.querySelector('.about-page');
         
         dateBtns.forEach(btn => {
             btn.addEventListener('click', () => {
+                // 如果是"关于"按钮
+                if (btn.dataset.page === 'about') {
+                    // 移除所有日期按钮的激活状态
+                    dateBtns.forEach(b => b.classList.remove('active'));
+                    cards.forEach(c => c.classList.remove('active'));
+                    
+                    // 激活"关于"按钮
+                    btn.classList.add('active');
+                    
+                    // 显示关于页面
+                    aboutPage.classList.add('active');
+                    
+                    return;
+                }
+                
+                // 如果是日期按钮
                 const targetDate = btn.dataset.date;
+                
+                // 隐藏关于页面
+                aboutPage.classList.remove('active');
                 
                 // 移除所有激活状态
                 dateBtns.forEach(b => b.classList.remove('active'));
@@ -136,8 +143,8 @@ class Garden {
                 if (targetCard) {
                     targetCard.classList.add('active');
                     
-                    // 滚动到卡片顶部（在 tab-content 内部滚动）
-                    tabContent.scrollTo({
+                    // 滚动到卡片顶部
+                    cardDisplay.scrollTo({
                         top: targetCard.offsetTop - 20,
                         behavior: 'smooth'
                     });

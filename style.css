@@ -44,102 +44,46 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     height: 100vh;
-    overflow: hidden; /* 禁止 body 滚动 */
+    overflow: hidden;
     display: flex;
     flex-direction: column;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 html {
     height: 100%;
-    overflow: hidden; /* 禁止 html 滚动 */
-}
-
-/* 顶部 Tab 导航 - 固定在顶部，支持 safe area */
-.top-tabs {
-    display: flex;
-    justify-content: center;
-    gap: 0;
-    padding: 0.4rem 0;
-    padding-top: calc(0.4rem + env(safe-area-inset-top));
-    border-bottom: 1px solid var(--color-border);
-    background: var(--color-bg);
-    flex-shrink: 0; /* 不压缩 */
-    margin-top: calc(-1 * env(safe-area-inset-top)); /* 延伸到刘海区域 */
-}
-
-.tab-btn {
-    background: none;
-    border: none;
-    padding: 0.3rem 1rem;
-    font-family: var(--font-serif);
-    font-size: 0.85rem;
-    color: var(--color-text-light);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border-bottom: 2px solid transparent;
-    font-weight: 300;
-}
-
-.tab-btn.active {
-    color: var(--color-accent);
-    border-bottom-color: var(--color-accent);
-    font-weight: 400;
-}
-
-.tab-btn:hover {
-    color: var(--color-accent);
-}
-
-/* 主容器 - flexbox 布局 */
-.container {
-    flex: 1; /* 占据剩余空间 */
-    display: flex;
-    flex-direction: column;
     overflow: hidden;
-    max-width: 900px;
-    margin: 0 auto;
-    width: 100%;
 }
 
-/* Tab 内容区域 - 中间滚动区域 */
-.tab-content {
-    display: none;
-    flex: 1; /* 占据剩余空间 */
+/* 卡片展示区 - 主滚动区域 */
+.card-display {
+    flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 0 var(--spacing-md) var(--spacing-md);
+    padding: var(--spacing-md);
+    padding-bottom: 0;
 }
 
-.tab-content.active {
-    display: flex;
-    flex-direction: column;
-}
-
-/* 自定义滚动条样式 */
-.tab-content::-webkit-scrollbar {
+/* 自定义滚动条 */
+.card-display::-webkit-scrollbar {
     width: 8px;
 }
 
-.tab-content::-webkit-scrollbar-track {
+.card-display::-webkit-scrollbar-track {
     background: var(--color-border);
 }
 
-.tab-content::-webkit-scrollbar-thumb {
+.card-display::-webkit-scrollbar-thumb {
     background: var(--color-accent-light);
     border-radius: 4px;
 }
 
-.tab-content::-webkit-scrollbar-thumb:hover {
+.card-display::-webkit-scrollbar-thumb:hover {
     background: var(--color-accent);
 }
 
-/* 卡片展示区 */
-.card-display {
-    padding: var(--spacing-sm) 0;
-    min-height: 100%;
-}
-
-/* 思考卡片 - 减少边距 */
+/* 思考卡片 */
 .thought-card {
     display: none;
     background: var(--color-card);
@@ -150,6 +94,9 @@ html {
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 0.4s ease, transform 0.4s ease;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .thought-card.active {
@@ -263,15 +210,11 @@ html {
     overflow-x: auto;
     overflow-y: hidden;
     padding: 0.5rem var(--spacing-md);
-    padding-left: max(var(--spacing-md), env(safe-area-inset-left));
-    padding-right: max(var(--spacing-md), env(safe-area-inset-right));
-    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
     background: var(--color-bg);
     border-top: 1px solid var(--color-border);
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
-    flex-shrink: 0; /* 不压缩 */
-    margin-bottom: calc(-1 * env(safe-area-inset-bottom)); /* 延伸到底部 safe area */
+    flex-shrink: 0;
 }
 
 .date-nav::-webkit-scrollbar {
@@ -335,9 +278,52 @@ html {
     color: var(--color-card);
 }
 
-/* 关于我页面 - 减少padding */
+/* 关于按钮 - 特殊样式 */
+.about-btn {
+    min-width: auto !important;
+    padding: 0.4rem 0.8rem !important;
+    text-align: center !important;
+}
+
+.about-btn .date-label {
+    display: none;
+}
+
+.about-btn .date-title {
+    font-size: 0.85rem;
+}
+
+/* 关于我页面 - 全屏覆盖 */
+.about-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-bg);
+    z-index: 100;
+    overflow-y: auto;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.about-page.active {
+    display: block;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+/* 关于我页面内容 */
 .about-content {
-    padding: var(--spacing-md) 0;
+    padding: var(--spacing-lg) var(--spacing-md);
     max-width: 600px;
     margin: 0 auto;
 }
