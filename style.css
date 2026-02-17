@@ -64,6 +64,7 @@ html {
     border-bottom: 1px solid var(--color-border);
     background: var(--color-bg);
     flex-shrink: 0; /* 不压缩 */
+    margin-top: calc(-1 * env(safe-area-inset-top)); /* 延伸到刘海区域 */
 }
 
 .tab-btn {
