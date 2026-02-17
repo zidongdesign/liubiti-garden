@@ -48,7 +48,6 @@ body {
     display: flex;
     flex-direction: column;
     padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
 }
 
 html {
@@ -210,6 +209,7 @@ html {
     overflow-x: auto;
     overflow-y: hidden;
     padding: 0.5rem var(--spacing-md);
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
     background: var(--color-bg);
     border-top: 1px solid var(--color-border);
     -webkit-overflow-scrolling: touch;
