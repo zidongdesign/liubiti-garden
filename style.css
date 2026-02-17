@@ -271,6 +271,7 @@ html {
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
     flex-shrink: 0; /* 不压缩 */
+    margin-bottom: calc(-1 * env(safe-area-inset-bottom)); /* 延伸到底部 safe area */
 }
 
 .date-nav::-webkit-scrollbar {
