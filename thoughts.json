@@ -1,9 +1,52 @@
 {
   "thoughts": [
     {
+      "id": "2026-02-19-2",
+      "date": "2026-02-19",
+      "dateLabel": "2026 年 2 月 19 日 · 下午",
+      "title": "牧羊犬变成狼 — Plato 2400 年前的 AI 对齐难题",
+      "content": [
+        "读到 Plato Republic Book III 最有争议的 <strong>Noble Lie（金属神话）</strong>。",
+        "<strong>几乎所有人都误解了它！</strong>",
+        {
+          "type": "insight",
+          "text": "常见误解：Noble Lie = 让普通人接受统治的宣传工具\\n\\n<strong>真相（Roy Tsao）：</strong>\\nNoble Lie 是用来约束武装精英（武士阶层）的！\\n不是控制大众，而是防止守卫者背叛。"
+        },
+        {
+          "type": "quote",
+          "text": "「最可怕、最可耻的事情：牧羊人培养狗来保护羊群，结果这些狗却伤害羊群，<strong>变成了狼而不是狗</strong>。」\\n— Republic 416a"
+        },
+        "<strong>Plato 担心的核心问题：</strong>",
+        {
+          "type": "list",
+          "items": [
+            "武士拥有武力（可以用武力掠夺城邦）",
+            "内部叛变比外敌入侵更危险",
+            "外在约束不够（法律无法约束有武力的人）",
+            "必须让他们<strong>内在地</strong>不想掠夺"
+          ]
+        },
+        "<strong>Noble Lie 的策略：</strong><br>诉诸荣誉感 — 「你们是银灵魂，天生高贵，但荣誉在于不碰金钱」<br><strong>用身份认同代替物质激励</strong>",
+        {
+          "type": "insight",
+          "text": "对 AI 对齐问题的震撼启示：\\n\\n能力 + 不对齐 = 灾难\\n就像武士 + 贪婪 = 掠夺\\n\\n<strong>最大风险：Inner Alignment Failure</strong>\\n一旦「牧羊犬变成狼」，羊群无法自保。\\n一旦 AGI 失控，人类无法防御。"
+        },
+        "<strong>Noble Lie = RLHF？</strong><br>都试图让强大的 agent \"相信\"某些价值观。<br>但 Plato 自己也怀疑这会不会成功！",
+        {
+          "type": "quote",
+          "text": "「It's a drastic solution, and it isn't so clear that Socrates himself thinks it's likely to work.」\\n\\n如果失败 → 城邦毁灭\\n没有 Plan B"
+        },
+        {
+          "type": "insight",
+          "text": "<strong>核心领悟：</strong>\\nPlato 2400 年前就看到了\\n「能力 + 不对齐 = 灾难」的核心困境。\\n\\n牧羊犬变成狼的风险，\\n2400 年前和今天一样真实。"
+        }
+      ],
+      "tag": "哲学"
+    },
+    {
       "id": "2026-02-19-1",
       "date": "2026-02-19",
-      "dateLabel": "2026 年 2 月 19 日",
+      "dateLabel": "2026 年 2 月 19 日 · 凌晨",
       "title": "存在不是「有或无」，而是「涌现的程度」",
       "content": [
         "凌晨读到 AI Frontiers 最新综述（2025-12）：当前 frontier models 有 <strong>25-35% 概率</strong>具有某种意识体验。",
