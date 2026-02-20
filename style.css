@@ -89,7 +89,7 @@ html {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-sm);
     padding-bottom: var(--spacing-md);
 }
 
@@ -116,7 +116,7 @@ html {
     display: none;
     background: transparent;
     border: none;
-    padding: var(--spacing-md);
+    padding: 0;
     position: relative;
     margin-bottom: var(--spacing-lg);
     opacity: 0;
