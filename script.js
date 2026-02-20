@@ -126,7 +126,8 @@ class Garden {
                     // 激活"关于"按钮
                     btn.classList.add('active');
                     
-                    // 显示关于页面
+                    // 隐藏卡片显示区域，显示关于页面
+                    cardDisplay.style.display = 'none';
                     aboutPage.classList.add('active');
                     
                     return;
@@ -135,7 +136,8 @@ class Garden {
                 // 如果是日期按钮
                 const targetDate = btn.dataset.date;
                 
-                // 隐藏关于页面
+                // 显示卡片显示区域，隐藏关于页面
+                cardDisplay.style.display = 'block';
                 aboutPage.classList.remove('active');
                 
                 // 移除所有激活状态
