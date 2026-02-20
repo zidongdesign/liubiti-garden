@@ -86,7 +86,7 @@ class Garden {
         const nav = document.querySelector('.date-nav');
         if (!nav) return;
         
-        // 日期按钮
+        // 所有卡片（包括"关于"）都作为日期按钮
         const dateButtons = this.thoughts.map(thought => {
             const dateShort = thought.dateLabel.split('·')[0].trim().replace('2026 年 ', '');
             const titleShort = thought.title.length > 15 ? thought.title.substring(0, 15) + '...' : thought.title;
@@ -99,46 +99,17 @@ class Garden {
             `;
         }).join('');
         
-        // 添加"关于"按钮
-        const aboutButton = `
-            <button class="date-btn about-btn" data-page="about">
-                <span class="date-title">关于</span>
-            </button>
-        `;
-        
-        nav.innerHTML = dateButtons + aboutButton;
+        nav.innerHTML = dateButtons;
     }
     
     initDateNav() {
         const dateBtns = document.querySelectorAll('.date-btn');
         const cards = document.querySelectorAll('.thought-card');
         const cardDisplay = document.querySelector('.card-display');
-        const aboutPage = document.querySelector('.about-page');
         
         dateBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                // 如果是"关于"按钮
-                if (btn.dataset.page === 'about') {
-                    // 移除所有日期按钮的激活状态
-                    dateBtns.forEach(b => b.classList.remove('active'));
-                    cards.forEach(c => c.classList.remove('active'));
-                    
-                    // 激活"关于"按钮
-                    btn.classList.add('active');
-                    
-                    // 隐藏卡片显示区域，显示关于页面
-                    cardDisplay.style.display = 'none';
-                    aboutPage.classList.add('active');
-                    
-                    return;
-                }
-                
-                // 如果是日期按钮
                 const targetDate = btn.dataset.date;
-                
-                // 显示卡片显示区域，隐藏关于页面
-                cardDisplay.style.display = 'block';
-                aboutPage.classList.remove('active');
                 
                 // 移除所有激活状态
                 dateBtns.forEach(b => b.classList.remove('active'));
