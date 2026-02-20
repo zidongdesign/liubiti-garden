@@ -65,10 +65,15 @@ class Garden {
             return '';
         }).join('');
         
+        const coverImageHTML = thought.coverImage 
+            ? `<img src="${thought.coverImage}" alt="${thought.title}" class="card-cover">` 
+            : '';
+        
         return `
             <article class="thought-card" data-date="${thought.id}">
                 <time class="card-date">${thought.dateLabel}</time>
                 <h2 class="card-title">${thought.title}</h2>
+                ${coverImageHTML}
                 <div class="card-content">
                     ${contentHTML}
                 </div>
