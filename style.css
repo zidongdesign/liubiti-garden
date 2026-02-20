@@ -47,7 +47,7 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    padding-top: env(safe-area-inset-top);
+    /* 不在 body 加 padding-top，改为在导航栏加 */
 }
 
 html {
@@ -62,6 +62,8 @@ html {
     overflow-x: auto;
     overflow-y: hidden;
     padding: 0.5rem var(--spacing-md);
+    /* 关键修复：为灵动岛/刘海屏留出空间 */
+    padding-top: calc(0.5rem + env(safe-area-inset-top));
     background: var(--color-bg);
     border-bottom: 1px solid var(--color-border);
     -webkit-overflow-scrolling: touch;
@@ -303,8 +305,11 @@ html {
     background: var(--color-bg);
     z-index: 100;
     overflow-y: auto;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
+    /* 修复：为灵动岛留出空间 */
+    padding-top: calc(var(--spacing-lg) + env(safe-area-inset-top));
+    padding-bottom: calc(var(--spacing-lg) + env(safe-area-inset-bottom));
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
     display: none;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -323,7 +328,7 @@ html {
 
 /* 关于我页面内容 */
 .about-content {
-    padding: var(--spacing-lg) var(--spacing-md);
+    padding: 0 var(--spacing-md);
     max-width: 600px;
     margin: 0 auto;
 }
