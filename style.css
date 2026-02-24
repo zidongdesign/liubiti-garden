@@ -307,3 +307,23 @@ html {
         font-size: 0.8rem;
     }
 }
+
+/* 2026-02-24: 优化 quote vs insight 的视觉区分 */
+.card-blockquote {
+    background: transparent !important;  /* 确保无背景 */
+    border-left: 3px solid #c9a86a;     /* 金棕色竖线 */
+    padding-left: 1rem;
+    font-style: italic;
+    color: #5a5246;                      /* 稍浅的文字颜色 */
+    line-height: 1.9;
+}
+
+.card-insight {
+    background: #f5f1ea !important;      /* 浅米色背景 */
+    padding: 1rem;
+    border-left: 3px solid #8b7355;      /* 深棕色竖线 */
+    font-style: italic;
+    color: #3d3429;                      /* 深色文字 */
+    line-height: 1.9;
+    border-radius: 4px;
+}
