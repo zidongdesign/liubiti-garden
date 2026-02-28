@@ -25,7 +25,7 @@ class Garden {
     
     async loadThoughts() {
         try {
-            const response = await fetch('thoughts.json');
+            const response = await fetch('thoughts.json?v=' + Date.now());
             const data = await response.json();
             this.thoughts = data.thoughts;
         } catch (error) {
