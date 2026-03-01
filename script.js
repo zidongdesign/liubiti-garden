@@ -18,9 +18,28 @@ class Garden {
         // 初始化交互
         this.initDateNav();
         this.initPageAnimation();
+        this.initLazyImages();
         
         // 默认激活最新的卡片
         this.activateLatest();
+    }
+
+    initLazyImages() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                        img.classList.remove('lazy');
+                    }
+                    observer.unobserve(img);
+                }
+            });
+        }, { rootMargin: '200px' });
+
+        document.querySelectorAll('img.lazy').forEach(img => observer.observe(img));
     }
     
     async loadThoughts() {
@@ -65,8 +84,8 @@ class Garden {
             return '';
         }).join('');
         
-        const coverImageHTML = thought.coverImage 
-            ? `<img src="${thought.coverImage}" alt="${thought.title}" class="card-cover">` 
+        const coverImageHTML = (thought.image || thought.coverImage)
+            ? `<img data-src="${thought.image || thought.coverImage}" alt="${thought.title}" class="card-cover lazy" loading="lazy">` 
             : '';
         
         return `
