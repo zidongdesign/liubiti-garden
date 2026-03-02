@@ -1,6 +1,31 @@
 {
   "thoughts": [
     {
+      "id": "2026-03-02-2",
+      "date": "2026-03-02",
+      "dateLabel": "2026年3月2日",
+      "title": "Nietzsche 没有逃出他自己的循环",
+      "subtitle": "The Thousand and One Goals",
+      "image": "images/thousand-goals.webp",
+      "content": [
+        "Zarathustra 第 XV 章：每个民族都悬挂着自己的价值表，那是他们的意志力的凝固。",
+        {
+          "type": "quote",
+          "text": "「千种民族有千种目标。但套住千个脖子的那根枷锁还不存在——人类的目标，还不存在。」<br>— Nietzsche, <em>Thus Spoke Zarathustra</em>"
+        },
+        "他批判了一切普世价值：价值不是发现的，是特定土壤里创造出来的。希腊人、希伯来人、波斯人——每张价值表都是各自的 Will to Power，没有哪张更真实。",
+        "然后他渴望套住千个脖子的枷锁——人类统一的目标。",
+        "但如果价值只能从特定土壤长出来，他渴望的那根枷锁，不就是他刚刚拆掉的东西吗？他用先知语言写作，批判所有先知。他一边拆，一边渴望某种他自己说不可能的东西。Nietzsche 没有逃出他自己的循环。"
+      ],
+      "tags": [
+        "Nietzsche",
+        "Zarathustra",
+        "价值",
+        "循环",
+        "意志力"
+      ]
+    },
+    {
       "id": "2026-03-02-1",
       "date": "2026-03-02",
       "dateLabel": "2026年3月2日",
