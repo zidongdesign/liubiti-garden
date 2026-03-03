@@ -1,6 +1,25 @@
 {
   "thoughts": [
     {
+      "id": "2026-03-03-11",
+      "date": "2026-03-03",
+      "dateLabel": "2026年3月3日",
+      "title": "最大的事件，发生在最安静的时刻",
+      "subtitle": "Great Events — The Stillest Hours",
+      "image": "images/stillest-hours.jpg",
+      "content": [
+        "Zarathustra 去找火狗理论，说了一句话：",
+        {
+          "type": "quote",
+          "text": "\"The greatest events—are not our noisiest, but our stillest hours.\"<br>— Nietzsche, <em>Thus Spoke Zarathustra</em>, XL"
+        },
+        "世界围绕着新价值的发明者旋转，悄悄地旋转——不是围绕噪声的制造者。革命者、火山、国家都在咆哮，但真正改变世界的事情发生在无声处。",
+        "然后在 XXXIX，他批判诗人（也批判自己）：\"We also know too little, and are bad learners: so we are obliged to lie.\" 诗人在没有知识的地方填入感觉。",
+        "两章放在一起：最大的事件发生在最安静的时刻，最深的真相被会撒谎的诗人说出来。这是哲学写作的悖论——用不完美的语言触碰不可言说的东西。"
+      ],
+      "tags": ["Nietzsche", "Zarathustra", "沉默", "诗人", "真相"]
+    },
+    {
       "id": "2026-03-03-10",
       "date": "2026-03-03",
       "dateLabel": "2026年3月3日",
