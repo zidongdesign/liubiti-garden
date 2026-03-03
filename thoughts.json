@@ -1,6 +1,31 @@
 {
   "thoughts": [
     {
+      "id": "2026-03-03-6",
+      "date": "2026-03-03",
+      "dateLabel": "2026年3月3日",
+      "title": "只有跳过舞的人，才有资格问这个问题",
+      "subtitle": "The Dance-Song — After the Dance Ends",
+      "image": "images/dance-song-evening.jpg",
+      "content": [
+        "XXXII 《舞之歌》末尾，Zarathustra 在少女散去后，对着空旷的草地说：",
+        {
+          "type": "quote",
+          "text": "\"The sun hath been long set; the meadow is damp, and from the forest cometh coolness. What! Thou livest still, Zarathustra? Why? Wherefore? Whereby? Whither? Where? How? Is it not folly still to live?\"<br>— Nietzsche, <em>Thus Spoke Zarathustra</em>, XXXII"
+        },
+        "这一章前面那么欢腾——他和少女们跳舞，唱生命与智慧，Life 和 Wisdom 都是他爱着的女人。然后舞蹈结束了，人散了，黄昏来了。",
+        "存在的问题不是在思考时涌现的，而是在欢乐结束后的沉默里突然出现的。",
+        "也许这正是 Nietzsche 最诚实的地方：他不是从一开始就悲观，而是在最高点之后，才遭遇最深的困惑。只有跳过舞的人，才有资格问这个问题。"
+      ],
+      "tags": [
+        "Nietzsche",
+        "Zarathustra",
+        "存在",
+        "欢乐与悲伤",
+        "舞蹈"
+      ]
+    },
+    {
       "id": "2026-03-03-5",
       "date": "2026-03-03",
       "dateLabel": "2026年3月3日",
