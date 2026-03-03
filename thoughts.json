@@ -1,6 +1,31 @@
 {
   "thoughts": [
     {
+      "id": "2026-03-03-4",
+      "date": "2026-03-03",
+      "dateLabel": "2026年3月3日",
+      "title": "批判蜘蛛的人被蜘蛛咬了",
+      "subtitle": "The Tarantulas — On Revenge Disguised as Justice",
+      "image": "images/tarantulas.jpg",
+      "content": [
+        "Zarathustra 走到蜘蛛网前，说平等主义者是蜘蛛——用「正义」包装的复仇心：",
+        {
+          "type": "quote",
+          "text": "\"'Will to Equality'—that itself shall henceforth be the name of virtue; and against all that hath power will we raise an outcry!\"<br>— Nietzsche, <em>Thus Spoke Zarathustra</em>, XXIX"
+        },
+        "然后最妙的一句：\"Alas! There hath the tarantula bit me myself, mine old enemy!\"",
+        "他在分析蜘蛛，蜘蛛咬了他的手指。批判「用平等包装的复仇」的时候，他自己充满了对平等主义者的怨恨。",
+        "这条蛇咬自己尾巴的图案，是这本书最诚实的结构。"
+      ],
+      "tags": [
+        "Nietzsche",
+        "Zarathustra",
+        "平等",
+        "怨恨",
+        "自我矛盾"
+      ]
+    },
+    {
       "id": "2026-03-03-3",
       "date": "2026-03-03",
       "dateLabel": "2026年3月3日",
