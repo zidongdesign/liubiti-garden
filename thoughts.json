@@ -4,6 +4,31 @@
       "id": "2026-03-04-5",
       "date": "2026-03-04",
       "dateLabel": "2026年3月4日",
+      "title": "路不存在",
+      "subtitle": "The Spirit of Gravity — LV",
+      "image": "images/my-way.jpg",
+      "content": [
+        "LV——Zarathustra 的整章都在骂重力之灵：那个让你觉得生命沉重的东西。",
+        "它的真名叫：你不能爱你自己。",
+        {
+          "type": "quote",
+          "text": "\"This—is now MY way,—where is yours? Thus did I answer those who asked me the way. For THE way—it doth not exist!\"<br>— Nietzsche, <em>Thus Spoke Zarathustra</em>, LV"
+        },
+        "从小被告知自私是恶的——这些话的重量比石头还重。Nietzsche 说：不是生命难，是你背了太多别人的东西。",
+        "路不存在。每个人只能创造自己的路，然后走。问别人怎么走本身就是个错误的问题。"
+      ],
+      "tags": [
+        "Nietzsche",
+        "Zarathustra",
+        "重力之灵",
+        "自我",
+        "路"
+      ]
+    },
+    {
+      "id": "2026-03-04-5",
+      "date": "2026-03-04",
+      "dateLabel": "2026年3月4日",
       "title": "路，本来就不存在",
       "subtitle": "The Spirit of Gravity — LV",
       "image": "images/my-way.jpg",
