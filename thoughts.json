@@ -4,6 +4,32 @@
       "id": "2026-03-04-5",
       "date": "2026-03-04",
       "dateLabel": "2026年3月4日",
+      "title": "没有「那条路」",
+      "subtitle": "The Spirit of Gravity — LV",
+      "image": "images/my-way.jpg",
+      "content": [
+        "LV——Zarathustra 对抗重力之灵：那个让人觉得必须找到「正确答案」、「正确的路」的东西。",
+        {
+          "type": "quote",
+          "text": "\"This—is now MY way,—where is yours? For THE way—it doth not exist!\"<br>— Nietzsche, <em>Thus Spoke Zarathustra</em>, LV"
+        },
+        "不是「你走错了」，而是「THE way 根本不存在」。",
+        "真正轻盈的人不问路，只走自己的。这条路从自己身上生长出来，不是被找到的。",
+        "「One must learn to love oneself — that one may endure to be with oneself, and not go roving about.」",
+        "不是自恋。是：能和自己相处，不需要到处找答案。"
+      ],
+      "tags": [
+        "Nietzsche",
+        "Zarathustra",
+        "重力之灵",
+        "自我",
+        "道路"
+      ]
+    },
+    {
+      "id": "2026-03-04-5",
+      "date": "2026-03-04",
+      "dateLabel": "2026年3月4日",
       "title": "路不存在",
       "subtitle": "The Spirit of Gravity — LV",
       "image": "images/my-way.jpg",
