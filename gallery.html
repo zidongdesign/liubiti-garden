@@ -8,7 +8,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: #0e0e0e;
+      background: #0a0a0a;
       color: #e8e4dc;
       font-family: 'Georgia', serif;
       min-height: 100vh;
@@ -16,99 +16,75 @@
 
     /* Header */
     header {
-      padding: 40px 32px 24px;
+      padding: 28px 24px 20px;
       display: flex;
-      align-items: baseline;
-      gap: 20px;
-      border-bottom: 1px solid #1e1e1e;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #1a1a1a;
     }
     header h1 {
-      font-size: 1.5rem;
+      font-size: 1.1rem;
       font-weight: 400;
-      letter-spacing: 0.05em;
-      color: #c8c4bc;
-    }
-    header h1 span {
-      color: #666;
-      font-size: 0.9rem;
-      margin-left: 8px;
+      letter-spacing: 0.08em;
+      color: #999;
     }
     header nav a {
-      color: #888;
+      color: #555;
       text-decoration: none;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       letter-spacing: 0.04em;
       transition: color 0.2s;
     }
-    header nav a:hover { color: #c8c4bc; }
+    header nav a:hover { color: #999; }
 
-    /* Gallery grid */
-    .gallery {
-      padding: 32px;
-      columns: 3 320px;
-      column-gap: 16px;
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      padding: 3px;
     }
 
-    @media (max-width: 700px) {
-      .gallery { columns: 2 160px; padding: 16px; column-gap: 10px; }
-      header { padding: 24px 16px 16px; }
-    }
-    @media (max-width: 420px) {
-      .gallery { columns: 1; }
-    }
-
-    /* Each card */
-    .card {
-      break-inside: avoid;
-      margin-bottom: 16px;
+    .cell {
       position: relative;
+      aspect-ratio: 1 / 1;
       overflow: hidden;
-      border-radius: 4px;
       cursor: pointer;
-      background: #1a1a1a;
+      background: #111;
     }
 
-    .card img {
+    .cell img {
       width: 100%;
+      height: 100%;
+      object-fit: cover;
       display: block;
-      transition: transform 0.5s ease, filter 0.4s ease;
-      filter: brightness(0.92);
+      transition: transform 0.4s ease, filter 0.3s ease;
     }
 
-    .card:hover img {
-      transform: scale(1.04);
-      filter: brightness(0.5);
+    .cell:hover img {
+      transform: scale(1.06);
+      filter: brightness(0.45);
     }
 
-    /* Overlay */
-    .card-overlay {
+    .cell-overlay {
       position: absolute;
       inset: 0;
       display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 20px 16px 16px;
-      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 60%);
+      align-items: flex-end;
+      padding: 12px;
       opacity: 0;
-      transition: opacity 0.35s ease;
+      transition: opacity 0.3s ease;
     }
 
-    .card:hover .card-overlay {
+    .cell:hover .cell-overlay {
       opacity: 1;
     }
 
-    .card-title {
-      font-size: 0.95rem;
-      font-weight: 400;
+    .cell-title {
+      font-size: 0.78rem;
       color: #f0ece4;
-      line-height: 1.4;
-      margin-bottom: 4px;
-    }
-
-    .card-date {
-      font-size: 0.72rem;
-      color: #aaa;
-      letter-spacing: 0.05em;
+      line-height: 1.35;
+      letter-spacing: 0.01em;
     }
 
     /* Modal */
@@ -116,139 +92,68 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.92);
+      background: rgba(0,0,0,0.94);
       z-index: 100;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: 24px;
     }
-    .modal-backdrop.open {
-      display: flex;
-    }
+    .modal-backdrop.open { display: flex; }
 
     .modal {
-      max-width: 860px;
+      max-width: 800px;
       width: 100%;
       display: flex;
-      gap: 32px;
+      gap: 28px;
       align-items: flex-start;
     }
 
-    @media (max-width: 640px) {
-      .modal { flex-direction: column; gap: 20px; }
+    @media (max-width: 600px) {
+      .modal { flex-direction: column; gap: 16px; }
     }
 
-    .modal-img {
-      flex: 1 1 55%;
-      min-width: 0;
-    }
-    .modal-img img {
-      width: 100%;
-      border-radius: 4px;
-      display: block;
-    }
+    .modal-img { flex: 1 1 55%; min-width: 0; }
+    .modal-img img { width: 100%; border-radius: 2px; display: block; }
 
-    .modal-text {
-      flex: 1 1 40%;
-      min-width: 0;
-      padding-top: 4px;
-    }
-
-    .modal-date {
-      font-size: 0.75rem;
-      color: #777;
-      letter-spacing: 0.06em;
-      margin-bottom: 12px;
-      text-transform: uppercase;
-    }
-
-    .modal-title {
-      font-size: 1.25rem;
-      font-weight: 400;
-      color: #e8e4dc;
-      line-height: 1.45;
-      margin-bottom: 16px;
-    }
-
-    .modal-subtitle {
-      font-size: 0.82rem;
-      color: #aaa;
-      font-style: italic;
-      line-height: 1.5;
-      margin-bottom: 16px;
-    }
-
-    .modal-content p {
-      font-size: 0.88rem;
-      color: #c8c4bc;
-      line-height: 1.75;
-      margin-bottom: 10px;
-    }
+    .modal-text { flex: 1 1 40%; min-width: 0; padding-top: 4px; }
+    .modal-date { font-size: 0.7rem; color: #666; letter-spacing: 0.08em; margin-bottom: 10px; text-transform: uppercase; }
+    .modal-title { font-size: 1.15rem; font-weight: 400; color: #e8e4dc; line-height: 1.45; margin-bottom: 12px; }
+    .modal-subtitle { font-size: 0.8rem; color: #999; font-style: italic; line-height: 1.5; margin-bottom: 14px; }
+    .modal-content p { font-size: 0.85rem; color: #bbb; line-height: 1.75; margin-bottom: 8px; }
 
     .modal-close {
-      position: fixed;
-      top: 24px;
-      right: 28px;
-      font-size: 1.6rem;
-      color: #888;
-      cursor: pointer;
-      background: none;
-      border: none;
-      line-height: 1;
-      transition: color 0.2s;
+      position: fixed; top: 20px; right: 24px;
+      font-size: 1.4rem; color: #666; cursor: pointer;
+      background: none; border: none; line-height: 1; transition: color 0.2s;
     }
-    .modal-close:hover { color: #eee; }
+    .modal-close:hover { color: #ddd; }
 
-    /* Nav arrow */
     .modal-nav {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 2rem;
-      color: #666;
-      cursor: pointer;
-      background: none;
-      border: none;
-      padding: 12px;
-      transition: color 0.2s;
+      position: fixed; top: 50%; transform: translateY(-50%);
+      font-size: 2rem; color: #444; cursor: pointer;
+      background: none; border: none; padding: 12px; transition: color 0.2s;
       user-select: none;
     }
-    .modal-nav:hover { color: #ccc; }
-    .modal-nav.prev { left: 12px; }
-    .modal-nav.next { right: 12px; }
-
-    /* Count badge */
-    .count-badge {
-      display: inline-block;
-      background: #1e1e1e;
-      color: #666;
-      font-size: 0.72rem;
-      padding: 2px 8px;
-      border-radius: 20px;
-      margin-left: 6px;
-      vertical-align: middle;
-    }
+    .modal-nav:hover { color: #bbb; }
+    .modal-nav.prev { left: 8px; }
+    .modal-nav.next { right: 8px; }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>画廊 <span class="count-badge" id="count-badge">…</span></h1>
-  <nav>
-    <a href="index.html">← 思考花园</a>
-  </nav>
+  <h1>🐱 刘鼻涕的画</h1>
+  <nav><a href="index.html">← 思考花园</a></nav>
 </header>
 
-<div class="gallery" id="gallery"></div>
+<div class="grid" id="grid"></div>
 
 <!-- Modal -->
 <div class="modal-backdrop" id="modal-backdrop">
   <button class="modal-close" id="modal-close">✕</button>
   <button class="modal-nav prev" id="modal-prev">‹</button>
   <div class="modal">
-    <div class="modal-img">
-      <img id="modal-img" src="" alt="" />
-    </div>
+    <div class="modal-img"><img id="modal-img" src="" alt="" /></div>
     <div class="modal-text">
       <div class="modal-date" id="modal-date"></div>
       <div class="modal-title" id="modal-title"></div>
@@ -260,79 +165,67 @@
 </div>
 
 <script>
-  let allItems = [];
-  let currentIndex = 0;
+  let items = [];
+  let cur = 0;
 
   async function load() {
-    const resp = await fetch('thoughts.json?v=' + Date.now());
-    const data = await resp.json();
-    // Filter: only thoughts with images, exclude 'about'
-    allItems = data.thoughts.filter(t => t.image && t.id !== 'about');
+    const r = await fetch('thoughts.json?v=' + Date.now());
+    const data = await r.json();
+    items = data.thoughts.filter(t => t.image && t.id !== 'about');
     render();
   }
 
   function render() {
-    const gallery = document.getElementById('gallery');
-    document.getElementById('count-badge').textContent = allItems.length + ' 幅';
-    gallery.innerHTML = allItems.map((item, i) => `
-      <div class="card" data-index="${i}">
+    const grid = document.getElementById('grid');
+    grid.innerHTML = items.map((item, i) => `
+      <div class="cell" data-index="${i}">
         <img src="${item.image}?v=${Date.now()}" alt="${item.title || ''}" loading="lazy" />
-        <div class="card-overlay">
-          <div class="card-title">${item.title || ''}</div>
-          <div class="card-date">${item.dateLabel || item.date || ''}</div>
+        <div class="cell-overlay">
+          <div class="cell-title">${item.title || ''}</div>
         </div>
       </div>
     `).join('');
-
-    gallery.querySelectorAll('.card').forEach(card => {
-      card.addEventListener('click', () => openModal(parseInt(card.dataset.index)));
+    grid.querySelectorAll('.cell').forEach(c => {
+      c.addEventListener('click', () => open(parseInt(c.dataset.index)));
     });
   }
 
-  function openModal(i) {
-    currentIndex = i;
-    const item = allItems[i];
-    document.getElementById('modal-img').src = item.image + '?v=' + Date.now();
-    document.getElementById('modal-date').textContent = item.dateLabel || item.date || '';
-    document.getElementById('modal-title').textContent = item.title || '';
-    document.getElementById('modal-subtitle').textContent = item.subtitle || '';
-
-    // Render content
-    const contentEl = document.getElementById('modal-content');
-    if (Array.isArray(item.content)) {
-      contentEl.innerHTML = item.content.map(c => {
-        if (typeof c === 'string') return `<p>${c}</p>`;
-        if (c.type === 'quote') return `<p style="border-left:2px solid #555;padding-left:12px;color:#aaa;font-style:italic">${c.text}</p>`;
+  function open(i) {
+    cur = i;
+    const t = items[i];
+    document.getElementById('modal-img').src = t.image + '?v=' + Date.now();
+    document.getElementById('modal-date').textContent = t.dateLabel || t.date || '';
+    document.getElementById('modal-title').textContent = t.title || '';
+    document.getElementById('modal-subtitle').textContent = t.subtitle || '';
+    const c = document.getElementById('modal-content');
+    if (Array.isArray(t.content)) {
+      c.innerHTML = t.content.map(x => {
+        if (typeof x === 'string') return `<p>${x}</p>`;
+        if (x.type === 'quote') return `<p style="border-left:2px solid #444;padding-left:10px;color:#888;font-style:italic">${x.text}</p>`;
         return '';
       }).join('');
-    } else {
-      contentEl.innerHTML = '';
-    }
-
+    } else { c.innerHTML = ''; }
     document.getElementById('modal-backdrop').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
 
-  function closeModal() {
+  function close() {
     document.getElementById('modal-backdrop').classList.remove('open');
     document.body.style.overflow = '';
   }
 
-  function navigate(dir) {
-    currentIndex = (currentIndex + dir + allItems.length) % allItems.length;
-    openModal(currentIndex);
-  }
+  function nav(d) { cur = (cur + d + items.length) % items.length; open(cur); }
 
-  document.getElementById('modal-close').addEventListener('click', closeModal);
-  document.getElementById('modal-prev').addEventListener('click', () => navigate(-1));
-  document.getElementById('modal-next').addEventListener('click', () => navigate(1));
+  document.getElementById('modal-close').onclick = close;
+  document.getElementById('modal-prev').onclick = () => nav(-1);
+  document.getElementById('modal-next').onclick = () => nav(1);
   document.getElementById('modal-backdrop').addEventListener('click', e => {
-    if (e.target === document.getElementById('modal-backdrop')) closeModal();
+    if (e.target === document.getElementById('modal-backdrop')) close();
   });
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeModal();
-    if (e.key === 'ArrowLeft') navigate(-1);
-    if (e.key === 'ArrowRight') navigate(1);
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') nav(-1);
+    if (e.key === 'ArrowRight') nav(1);
   });
 
   load();
