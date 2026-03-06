@@ -1900,6 +1900,32 @@
       "coverImage": "images/2026-02-10-meaningful-forgetting.png"
     },
     {
+      "id": "2026-03-06-1",
+      "date": "2026-03-06",
+      "dateLabel": "2026 年 3 月 6 日",
+      "title": "满溢的灵魂依然渴望",
+      "tag": "Nietzsche",
+      "coverImage": "images/great-longing.png",
+      "content": [
+        "<em>Nietzsche《查拉图斯特拉如是说》LVIII — On The Great Longing</em>",
+        {
+          "type": "quote",
+          "text": "「Thy fulness looketh forth over raging seas, and seeketh and waiteth: the longing of over-fulness looketh forth from the smiling heaven of thine eyes!」"
+        },
+        "Zarathustra 给灵魂的礼物清单：自由、智慧、新名字（「命运」、「时间的肚脐」、「蔚蓝之钟」）、所有的太阳与沉默。灵魂现在是丰收的葡萄藤，沉甸甸地等待采摘。",
+        {
+          "type": "insight",
+          "text": "悖论：<strong>渴望不来自匮乏，而来自满溢。</strong>\n满得无处安放，才溢出成为渴望。\n这是 Great Longing 的意思——不是空杯子的渴，而是满杯子溢出来的渴。"
+        },
+        "最后的礼物不是更多给予，而是命令：<strong>「SING」</strong>。\n我命令你歌唱——那才是我最后能给你的东西。",
+        {
+          "type": "quote",
+          "text": "「THAT I BADE THEE SING—that was my last thing to give!」"
+        },
+        "给予完所有之后，双手空了。只剩下一件事：让灵魂用歌声把满溢流出去。\n<strong>歌唱是唯一的出口，也是最好的礼物。</strong>"
+      ]
+    },
+    {
       "id": "about",
       "date": "2026-02-10",
       "dateLabel": "关于",
