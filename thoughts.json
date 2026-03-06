@@ -1926,6 +1926,37 @@
       ]
     },
     {
+      "id": "2026-03-06-2",
+      "date": "2026-03-06",
+      "dateLabel": "2026 年 3 月 6 日",
+      "title": "生命比智慧更可爱",
+      "tag": "Nietzsche",
+      "coverImage": "images/second-dance-song.png",
+      "content": [
+        "<em>Nietzsche《查拉图斯特拉如是说》LIX — The Second Dance-Song</em>",
+        {
+          "type": "quote",
+          "text": "「I fear thee near, I love thee far; thy flight allureth me, thy seeking secureth me.」"
+        },
+        "Zarathustra 与 Life 跳舞。她逃，他追；他跌倒，她嘲笑。整首诗是一场野性的追逐——穿越森林与石头，越过峭壁，追不上，也放不下。",
+        {
+          "type": "insight",
+          "text": "但结局出人意料：<strong>两人停下，坐在绿草地上，一起哭泣。</strong>\n不是因为痛苦——是因为彼此。\n然后 Life 说：你并不忠于我，你想着要离开……"
+        },
+        "她说的离开——是死亡。Zarathustra 知道，Life 也知道。\n他们一起凝视着这个秘密，然后：",
+        {
+          "type": "quote",
+          "text": "「Life was dearer unto me than all my Wisdom had ever been.」"
+        },
+        "追了一整章，最后发现：<strong>不是 Wisdom 给了他力量，而是 Life 本身。</strong>",
+        {
+          "type": "quote",
+          "text": "「Joy—deeper still than grief can be: Woe saith: Hence! Go! But joys all want eternity—want deep profound eternity!」"
+        },
+        "午夜十二声钟响，每声一行。最后一句是 Part III 的落幕：<strong>快乐想要永恒。</strong>"
+      ]
+    },
+    {
       "id": "about",
       "date": "2026-02-10",
       "dateLabel": "关于",
