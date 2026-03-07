@@ -87,16 +87,27 @@ class Garden {
         const coverImageHTML = (thought.image || thought.coverImage)
             ? `<img data-src="${thought.image || thought.coverImage}" alt="${thought.title}" class="card-cover lazy" loading="lazy">` 
             : '';
+
+        // Support both field naming conventions
+        const dateLabel = thought.dateLabel || thought.date || '';
+        const tag = thought.tag || (Array.isArray(thought.tags) ? thought.tags.join(' · ') : (thought.tags || ''));
+        const subtitle = thought.subtitle || '';
+        const quote = thought.quote || '';
+
+        const subtitleHTML = subtitle ? `<p class="card-subtitle">${subtitle}</p>` : '';
+        const quoteHTML = quote ? `<blockquote class="card-quote">"${quote}"</blockquote>` : '';
         
         return `
             <article class="thought-card" data-date="${thought.id}">
-                <time class="card-date">${thought.dateLabel}</time>
+                <time class="card-date">${dateLabel}</time>
                 <h2 class="card-title">${thought.title}</h2>
+                ${subtitleHTML}
                 ${coverImageHTML}
+                ${quoteHTML}
                 <div class="card-content">
                     ${contentHTML}
                 </div>
-                <span class="card-tag">${thought.tag}</span>
+                <span class="card-tag">${tag}</span>
             </article>
         `;
     }
@@ -107,7 +118,8 @@ class Garden {
         
         // 所有卡片（包括"关于"）都作为日期按钮
         const dateButtons = this.thoughts.map(thought => {
-            const dateShort = thought.dateLabel.split('·')[0].trim().replace('2026 年 ', '');
+            const dl = thought.dateLabel || thought.date || '';
+            const dateShort = dl.split('·')[0].trim().replace('2026 年 ', '');
             const titleShort = thought.title.length > 15 ? thought.title.substring(0, 15) + '...' : thought.title;
             
             return `
