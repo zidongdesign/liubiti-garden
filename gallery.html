@@ -175,11 +175,18 @@
     render();
   }
 
+  function thumbUrl(img) {
+    // images/foo.webp → images/thumbs/foo.webp
+    if (!img) return '';
+    return img.replace('images/', 'images/thumbs/');
+  }
+
   function render() {
     const grid = document.getElementById('grid');
     grid.innerHTML = items.map((item, i) => `
       <div class="cell" data-index="${i}">
-        <img src="${item.image}?v=${Date.now()}" alt="${item.title || ''}" loading="lazy" />
+        <img src="${thumbUrl(item.image)}" alt="${item.title || ''}" loading="lazy"
+             onerror="this.src='${item.image}'" />
         <div class="cell-overlay">
           <div class="cell-title">${item.title || ''}</div>
         </div>

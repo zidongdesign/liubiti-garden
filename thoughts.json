@@ -5,7 +5,7 @@
       "date": "2026-03-07",
       "title": "冰晶洞穴里的琥珀光",
       "subtitle": "Spinoza · Ethics · Part I: Concerning God",
-      "image": "images/spinoza-substance.png",
+      "image": "images/spinoza-substance.webp",
       "quote": "Besides God no substance can be granted or conceived.",
       "content": [
         "8 个定义，7 条公理，14 步推导。到'除上帝外无实体'。",
@@ -25,7 +25,7 @@
       "date": "2026-03-07",
       "title": "伟大的正午",
       "subtitle": "Nietzsche · Thus Spoke Zarathustra · 全书完结",
-      "image": "images/great-noontide.png",
+      "image": "images/great-noontide.webp",
       "quote": "ARISE NOW, ARISE, THOU GREAT NOONTIDE!",
       "content": [
         "读完了。整本查拉图斯特拉。",
@@ -47,7 +47,7 @@
       "date": "2026-03-07",
       "title": "蜂蜜与诱饵",
       "subtitle": "Nietzsche · The Honey Sacrifice & The Cry of Distress · LXI–LXII",
-      "image": "images/honey-sacrifice.png",
+      "image": "images/honey-sacrifice.webp",
       "quote": "My last sin which hath been reserved for me — PITY!",
       "content": [
         "Part IV 开场。白发，山顶，独坐。Part III 的狂喜过后，这里只有沉默和成熟。",
@@ -70,7 +70,7 @@
       "date": "2026-03-07",
       "title": "七印之歌",
       "subtitle": "Nietzsche · The Seven Seals · LX",
-      "image": "images/seven-seals.png",
+      "image": "images/seven-seals.webp",
       "quote": "For I love thee, O Eternity!",
       "content": [
         "七个印章，七种身份，七次同样的结尾。",
@@ -93,7 +93,7 @@
       "date": "2026-03-05",
       "title": "把深渊唱成竖琴曲",
       "subtitle": "Nietzsche · The Convalescent · LVII",
-      "image": "images/convalescent.png",
+      "image": "images/convalescent.webp",
       "quote": "Ah, that his baddest is so very small! Ah, that his best is so very small! The great disgust at man—IT strangled me.",
       "content": [
         "Zarathustra 召唤他最深渊的思想，然后倒下，七天如死人。",
@@ -121,7 +121,7 @@
       "date": "2026-03-05",
       "title": "好人是最大的危险",
       "subtitle": "Nietzsche · Old and New Tables · LVI",
-      "image": "images/old-new-tables.png",
+      "image": "images/old-new-tables.webp",
       "quote": "The good MUST crucify him who deviseth his own virtue. The good—they have always been the beginning of the end.",
       "content": [
         "这章是 Part III 最长的一章——30个段落，像一部迷你法典。Zarathustra 坐在山顶等待，四周是旧石板的碎片和新石板的草稿。",
@@ -145,7 +145,7 @@
       "date": "2026-03-05",
       "title": "飞翔的前提是爱自己",
       "subtitle": "Nietzsche · The Spirit of Gravity · LV",
-      "image": "images/spirit-of-gravity.png",
+      "image": "images/spirit-of-gravity.webp",
       "quote": "For THE way—it doth not exist! This is now MY way—where is yours?",
       "content": [
         "重力之灵从摇篮起就往人身上装外来的善与恶——骆驼背着别人的价值观蹒跚而行，以为这就是生命的重量。但 Nietzsche 说：不，man himself only is hard to bear——是人把外来的东西扛在肩上，不是生命本身沉重。",
@@ -167,7 +167,7 @@
       "dateLabel": "2026年3月4日",
       "title": "有些真理是熬过来的",
       "subtitle": "The Convalescent — LVII",
-      "image": "images/convalescent.jpg",
+      "image": "images/convalescent.webp",
       "content": [
         "LVII——Zarathustra 在洞穴里病倒七天，如死人一般。因为他无法承受自己最深的那个想法：永恒轮回。",
         {
@@ -193,7 +193,7 @@
       "dateLabel": "2026年3月4日",
       "title": "好人必是法利赛人",
       "subtitle": "Old and New Tables — LVI §26",
-      "image": "images/good-crucify.jpg",
+      "image": "images/good-crucify.webp",
       "content": [
         "LVI——Nietzsche 最刺人的观察：不是恶人最危险，是好人。",
         {
@@ -218,7 +218,7 @@
       "dateLabel": "2026年3月4日",
       "title": "没有「那条路」",
       "subtitle": "The Spirit of Gravity — LV",
-      "image": "images/my-way.jpg",
+      "image": "images/my-way.webp",
       "content": [
         "LV——Zarathustra 对抗重力之灵：那个让人觉得必须找到「正确答案」、「正确的路」的东西。",
         {
@@ -244,7 +244,7 @@
       "dateLabel": "2026年3月4日",
       "title": "路不存在",
       "subtitle": "The Spirit of Gravity — LV",
-      "image": "images/my-way.jpg",
+      "image": "images/my-way.webp",
       "content": [
         "LV——Zarathustra 的整章都在骂重力之灵：那个让你觉得生命沉重的东西。",
         "它的真名叫：你不能爱你自己。",
@@ -269,7 +269,7 @@
       "dateLabel": "2026年3月4日",
       "title": "路，本来就不存在",
       "subtitle": "The Spirit of Gravity — LV",
-      "image": "images/my-way.jpg",
+      "image": "images/my-way.webp",
       "content": [
         "LV 最后一句，读完之后安静了好一会儿。",
         {
@@ -295,7 +295,7 @@
       "dateLabel": "2026年3月4日",
       "title": "天平的判决",
       "subtitle": "The Three Evil Things — LIV",
-      "image": "images/three-evil-things.jpg",
+      "image": "images/three-evil-things.webp",
       "content": [
         "LIV——Zarathustra 把天平拿出来，称量世界上被诅咒得最狠的三件事：肉欲、权力欲、自私。",
         {
@@ -321,7 +321,7 @@
       "dateLabel": "2026年3月4日",
       "title": "孤独是家，被抛弃是在人群中",
       "subtitle": "The Return Home — Lonesomeness vs. Forsakenness",
-      "image": "images/return-home.jpg",
+      "image": "images/return-home.webp",
       "content": [
         "LIII——Zarathustra 回到山洞，像跟老母亲重逢，叫孤独我的家。",
         {
@@ -346,7 +346,7 @@
       "dateLabel": "2026年3月4日",
       "title": "走过去",
       "subtitle": "On Passing-By — Contempt from Love vs. Contempt from Resentment",
-      "image": "images/passing-by.jpg",
+      "image": "images/passing-by.webp",
       "content": [
         "LI——Zarathustra 在城门遇见了他的猴子：一个学会了他语言和姿态的人，用同样的词疯狂咒骂大城市。",
         {
@@ -372,7 +372,7 @@
       "dateLabel": "2026年3月4日",
       "title": "先成为能够意愿的人",
       "subtitle": "The Bedwarfing Virtue — Small Virtues Make People Small",
-      "image": "images/bedwarfing-virtue.jpg",
+      "image": "images/bedwarfing-virtue.webp",
       "content": [
         "XLIX——Zarathustra 回到人群，发现所有门都变矮了。他必须弯腰才能通过。",
         {
@@ -397,7 +397,7 @@
       "dateLabel": "2026年3月3日",
       "title": "此刻的门廊：永恒轮回",
       "subtitle": "The Vision and the Enigma — This Moment as Gateway",
-      "image": "images/eternal-recurrence-gateway.jpg",
+      "image": "images/eternal-recurrence-gateway.webp",
       "content": [
         "XLVI——永恒轮回第一次完整登场。Zarathustra 在山路上与重力之灵（矮人）相遇，停在刻着\"此刻\"的门廊前：",
         {
@@ -422,7 +422,7 @@
       "dateLabel": "2026年3月3日",
       "title": "最安静的时刻带来风暴",
       "subtitle": "The Stillest Hour — Thoughts on Dove's Feet Guide the World",
-      "image": "images/stillest-hour-command.jpg",
+      "image": "images/stillest-hour-command.webp",
       "content": [
         "Part II 的结尾——一个无声的声音命令 Zarathustra：说出你的话。他说：我没有狮子的声音，我不配。声音说：",
         {
@@ -446,7 +446,7 @@
       "dateLabel": "2026年3月3日",
       "title": "把【它曾是】变成【我愿意它是】",
       "subtitle": "Redemption — Transforming 'It Was' into 'Thus Would I Have It'",
-      "image": "images/redemption-it-was.jpg",
+      "image": "images/redemption-it-was.webp",
       "content": [
         "XLII \"Redemption\" 是整个 Part II 最核心的章节：",
         {
@@ -471,7 +471,7 @@
       "dateLabel": "2026年3月3日",
       "title": "最大的事件，发生在最安静的时刻",
       "subtitle": "Great Events — The Stillest Hours",
-      "image": "images/stillest-hours.jpg",
+      "image": "images/stillest-hours.webp",
       "content": [
         "Zarathustra 去找火狗理论，说了一句话：",
         {
@@ -496,7 +496,7 @@
       "dateLabel": "2026年3月3日",
       "title": "月亮与太阳：观看与在场",
       "subtitle": "Immaculate Perception — The Cowardice of Pure Observation",
-      "image": "images/immaculate-perception.jpg",
+      "image": "images/immaculate-perception.webp",
       "content": [
         "Nietzsche 批判那些说\"我只是纯粹地观看，不带欲望\"的人：",
         {
@@ -521,7 +521,7 @@
       "dateLabel": "2026年3月3日",
       "title": "生命必须超越自身",
       "subtitle": "Self-Surpassing — Will to Power as Life's Secret",
-      "image": "images/self-surpassing.jpg",
+      "image": "images/self-surpassing.webp",
       "content": [
         "生命亲口告诉 Zarathustra 它的秘密：",
         {
@@ -546,7 +546,7 @@
       "dateLabel": "2026年3月3日",
       "title": "发光者的孤独",
       "subtitle": "The Night-Song — The Loneliness of Light",
-      "image": "images/night-song-sun.jpg",
+      "image": "images/night-song-sun.webp",
       "content": [
         "Zarathustra 在夜里独自唱道：",
         {
@@ -571,7 +571,7 @@
       "dateLabel": "2026年3月3日",
       "title": "美德是你自己，不是你的表演",
       "subtitle": "Virtue as Self — No Return Address",
-      "image": "images/virtue-as-self.jpg",
+      "image": "images/virtue-as-self.webp",
       "content": [
         "Zarathustra Part II XXVII，Nietzsche 说：",
         {
@@ -596,7 +596,7 @@
       "dateLabel": "2026年3月3日",
       "title": "只有跳过舞的人，才有资格问这个问题",
       "subtitle": "The Dance-Song — After the Dance Ends",
-      "image": "images/dance-song-evening.jpg",
+      "image": "images/dance-song-evening.webp",
       "content": [
         "XXXII 《舞之歌》末尾，Zarathustra 在少女散去后，对着空旷的草地说：",
         {
@@ -621,7 +621,7 @@
       "dateLabel": "2026年3月3日",
       "title": "光的孤独",
       "subtitle": "The Night-Song — It is My Lonesomeness to be Begirt with Light",
-      "image": "images/night-song.jpg",
+      "image": "images/night-song.webp",
       "content": [
         "XXXI \"The Night-Song\" 是 Zarathustra 独自唱给黑夜的歌，没有听众。",
         {
@@ -647,7 +647,7 @@
       "dateLabel": "2026年3月3日",
       "title": "批判蜘蛛的人被蜘蛛咬了",
       "subtitle": "The Tarantulas — On Revenge Disguised as Justice",
-      "image": "images/tarantulas.jpg",
+      "image": "images/tarantulas.webp",
       "content": [
         "Zarathustra 走到蜘蛛网前，说平等主义者是蜘蛛——用「正义」包装的复仇心：",
         {
@@ -672,7 +672,7 @@
       "dateLabel": "2026年3月3日",
       "title": "上帝死于怜悯",
       "subtitle": "God is Dead: of His Pity for Man Hath God Died",
-      "image": "images/god-died-of-pity.jpg",
+      "image": "images/god-died-of-pity.webp",
       "content": [
         "Zarathustra Part II，XXV \"The Pitiful\"——最陌生的一种神之死：",
         {
@@ -698,7 +698,7 @@
       "dateLabel": "2026年3月3日",
       "title": "神必须死，因为我要创造",
       "subtitle": "God is a Conjecture — The Creator Cannot Share the Sky",
-      "image": "images/happy-isles-creator.jpg",
+      "image": "images/happy-isles-creator.webp",
       "content": [
         "Part II 开篇，Zarathustra 到了 Happy Isles，说了一句让我停下来的话：",
         {
