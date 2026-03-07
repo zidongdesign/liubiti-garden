@@ -1,191 +1,216 @@
-// 刘鼻涕的思考花园 - 简化版本（去掉顶部 tab）
+// 刘鼻涕的思考花园 v2 — 瀑布流 + 月份导航
 
 class Garden {
     constructor() {
         this.thoughts = [];
-        this.currentThought = null;
+        this.months = [];   // [{label, key, ids}]
         this.init();
     }
-    
+
     async init() {
-        // 加载数据
         await this.loadThoughts();
-        
-        // 渲染卡片和导航
-        this.renderCards();
-        this.renderDateNav();
-        
-        // 初始化交互
-        this.initDateNav();
-        this.initPageAnimation();
-        this.initLazyImages();
-        
-        // 默认激活最新的卡片
-        this.activateLatest();
+        this.buildMonths();
+        this.renderNav();
+        this.renderStream();
+        this.initObserver();
+        this.initNavScroll();
+        this.fadeIn();
     }
 
-    initLazyImages() {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    if (img.dataset.src) {
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                        img.classList.remove('lazy');
-                    }
-                    observer.unobserve(img);
-                }
-            });
-        }, { rootMargin: '200px' });
-
-        document.querySelectorAll('img.lazy').forEach(img => observer.observe(img));
-    }
-    
     async loadThoughts() {
         try {
-            const response = await fetch('thoughts.json?v=' + Date.now());
-            const data = await response.json();
+            const r = await fetch('thoughts.json?v=' + Date.now());
+            const data = await r.json();
             this.thoughts = data.thoughts;
-        } catch (error) {
-            console.error('Failed to load thoughts:', error);
+        } catch (e) {
+            console.error('Failed to load thoughts:', e);
             this.thoughts = [];
         }
     }
-    
-    renderCards() {
-        const container = document.querySelector('.card-display');
-        if (!container) return;
-        
-        container.innerHTML = this.thoughts.map(thought => this.createCardHTML(thought)).join('');
-    }
-    
-    createCardHTML(thought) {
-        const contentHTML = thought.content.map(item => {
-            if (typeof item === 'string') {
-                return `<p class="card-text">${item}</p>`;
-            }
-            
-            if (item.type === 'insight') {
-                const text = item.text.replace(/\\n/g, '<br>').replace(/\n/g, '<br>');
-                return `<p class="card-insight">${text}</p>`;
-            }
-            
-            if (item.type === 'quote') {
-                const text = item.text.replace(/\\n/g, '<br>').replace(/\n/g, '<br>');
-                return `<blockquote class="card-blockquote">${text}</blockquote>`;
-            }
-            
-            if (item.type === 'list') {
-                const listItems = item.items.map(li => `<li>${li}</li>`).join('');
-                return `<ul class="card-list">${listItems}</ul>`;
-            }
-            
-            return '';
-        }).join('');
-        
-        const coverImageHTML = (thought.image || thought.coverImage)
-            ? `<img data-src="${thought.image || thought.coverImage}" alt="${thought.title}" class="card-cover lazy" loading="lazy">` 
-            : '';
 
-        // Support both field naming conventions
-        const dateLabel = thought.dateLabel || thought.date || '';
-        const tag = thought.tag || (Array.isArray(thought.tags) ? thought.tags.join(' · ') : (thought.tags || ''));
-        const subtitle = thought.subtitle || '';
-        const quote = thought.quote || '';
+    // ===== 日期工具 =====
 
-        const subtitleHTML = subtitle ? `<p class="card-subtitle">${subtitle}</p>` : '';
-        const quoteHTML = quote ? `<blockquote class="card-quote">"${quote}"</blockquote>` : '';
-        
-        return `
-            <article class="thought-card" data-date="${thought.id}">
-                <time class="card-date">${dateLabel}</time>
-                <h2 class="card-title">${thought.title}</h2>
-                ${subtitleHTML}
-                ${coverImageHTML}
-                ${quoteHTML}
-                <div class="card-content">
-                    ${contentHTML}
-                </div>
-                <span class="card-tag">${tag}</span>
-            </article>
-        `;
+    formatDate(t) {
+        // 统一输出 "Mar 7, 2026" 格式
+        const raw = t.dateLabel || t.date || t.id || '';
+        const d = this.parseDate(raw);
+        if (!d) return raw;
+        const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
     }
-    
-    renderDateNav() {
-        const nav = document.querySelector('.date-nav');
+
+    parseDate(str) {
+        // Handle "2026-03-07", "2026年3月4日", "2026-03-07-2"
+        let m;
+        m = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (m) return new Date(+m[1], +m[2]-1, +m[3]);
+        m = str.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+        if (m) return new Date(+m[1], +m[2]-1, +m[3]);
+        return null;
+    }
+
+    monthKey(t) {
+        const d = this.parseDate(t.dateLabel || t.date || t.id || '');
+        if (!d) return 'unknown';
+        return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    }
+
+    monthLabel(key) {
+        const [y, m] = key.split('-');
+        const names = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        return `${names[+m-1]} ${y}`;
+    }
+
+    // ===== 按月分组 =====
+
+    buildMonths() {
+        const map = new Map();
+        for (const t of this.thoughts) {
+            const k = this.monthKey(t);
+            if (!map.has(k)) map.set(k, []);
+            map.get(k).push(t.id);
+        }
+        this.months = [...map.entries()].map(([key, ids]) => ({
+            key,
+            label: this.monthLabel(key),
+            ids
+        }));
+    }
+
+    // ===== 渲染月份导航 =====
+
+    renderNav() {
+        const nav = document.querySelector('.month-nav');
         if (!nav) return;
-        
-        // 所有卡片（包括"关于"）都作为日期按钮
-        const dateButtons = this.thoughts.map(thought => {
-            const dl = thought.dateLabel || thought.date || '';
-            const dateShort = dl.split('·')[0].trim().replace('2026 年 ', '');
-            const titleShort = thought.title.length > 15 ? thought.title.substring(0, 15) + '...' : thought.title;
-            
-            return `
-                <button class="date-btn" data-date="${thought.id}">
-                    <span class="date-label">${dateShort}</span>
-                    <span class="date-title">${titleShort}</span>
-                </button>
-            `;
-        }).join('');
-        
-        nav.innerHTML = dateButtons;
-    }
-    
-    initDateNav() {
-        const dateBtns = document.querySelectorAll('.date-btn');
-        const cards = document.querySelectorAll('.thought-card');
-        const cardDisplay = document.querySelector('.card-display');
-        
-        dateBtns.forEach(btn => {
+        nav.innerHTML = this.months.map((m, i) => `
+            <button class="month-btn${i===0?' active':''}" data-month="${m.key}">${m.label}</button>
+        `).join('');
+
+        nav.querySelectorAll('.month-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                const targetDate = btn.dataset.date;
-                
-                // 移除所有激活状态
-                dateBtns.forEach(b => b.classList.remove('active'));
-                cards.forEach(c => c.classList.remove('active'));
-                
-                // 激活当前日期和卡片
-                btn.classList.add('active');
-                const targetCard = document.querySelector(`.thought-card[data-date="${targetDate}"]`);
-                if (targetCard) {
-                    targetCard.classList.add('active');
-                    
-                    // 滚动到卡片顶部
-                    cardDisplay.scrollTo({
-                        top: targetCard.offsetTop - 20,
-                        behavior: 'smooth'
-                    });
-                }
-                
-                // 滚动日期导航到当前按钮
-                btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                const target = document.getElementById('month-' + btn.dataset.month);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         });
     }
-    
-    activateLatest() {
-        // 默认激活第一个（最新的）卡片和日期
-        const firstCard = document.querySelector('.thought-card');
-        const firstBtn = document.querySelector('.date-btn');
-        
-        if (firstCard && firstBtn) {
-            firstCard.classList.add('active');
-            firstBtn.classList.add('active');
+
+    // ===== 渲染瀑布流 =====
+
+    renderStream() {
+        const container = document.querySelector('.card-stream');
+        if (!container) return;
+
+        let html = '';
+        let currentMonth = null;
+
+        for (const t of this.thoughts) {
+            const mk = this.monthKey(t);
+            if (mk !== currentMonth) {
+                currentMonth = mk;
+                html += `<div class="month-divider" id="month-${mk}">${this.monthLabel(mk)}</div>`;
+            }
+            html += this.createCardHTML(t);
         }
+
+        container.innerHTML = html;
     }
-    
-    initPageAnimation() {
+
+    createCardHTML(t) {
+        const date = this.formatDate(t);
+        const subtitle = t.subtitle ? `<p class="card-subtitle">${t.subtitle}</p>` : '';
+        const image = (t.image || t.coverImage)
+            ? `<img data-src="${t.image || t.coverImage}" alt="${t.title}" class="card-cover lazy" loading="lazy">`
+            : '';
+        const quote = t.quote
+            ? `<div class="card-quote">"${t.quote}"</div>`
+            : '';
+
+        const content = Array.isArray(t.content) ? t.content.map(item => {
+            if (typeof item === 'string') return `<p class="card-text">${item}</p>`;
+            if (item.type === 'insight') return `<p class="card-insight">${(item.text||'').replace(/\n/g,'<br>')}</p>`;
+            if (item.type === 'quote') return `<blockquote class="card-blockquote">${(item.text||'').replace(/\n/g,'<br>')}</blockquote>`;
+            if (item.type === 'list') return `<ul class="card-list">${(item.items||[]).map(li=>`<li>${li}</li>`).join('')}</ul>`;
+            return '';
+        }).join('') : '';
+
+        const tags = Array.isArray(t.tags) && t.tags.length
+            ? `<div class="card-tags">${t.tags.map(tg => `<span class="card-tag-pill">${tg}</span>`).join('')}</div>`
+            : '';
+
+        return `
+            <article class="thought-card" id="card-${t.id}">
+                <time class="card-date">${date}</time>
+                <h2 class="card-title">${t.title}</h2>
+                ${subtitle}
+                ${image}
+                ${quote}
+                <div class="card-content">${content}</div>
+                ${tags}
+            </article>
+        `;
+    }
+
+    // ===== Intersection Observer (lazy load + fade in + nav highlight) =====
+
+    initObserver() {
+        // Lazy images
+        const imgObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    const img = e.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                    }
+                    imgObs.unobserve(img);
+                }
+            });
+        }, { rootMargin: '300px' });
+
+        document.querySelectorAll('img.lazy').forEach(img => imgObs.observe(img));
+
+        // Fade in cards
+        const cardObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    cardObs.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.thought-card').forEach(card => cardObs.observe(card));
+    }
+
+    // ===== Scroll-based nav highlight =====
+
+    initNavScroll() {
+        const dividers = document.querySelectorAll('.month-divider');
+        const btns = document.querySelectorAll('.month-btn');
+        if (!dividers.length || !btns.length) return;
+
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    const mk = e.target.id.replace('month-', '');
+                    btns.forEach(b => b.classList.toggle('active', b.dataset.month === mk));
+                    // scroll nav button into view
+                    const active = document.querySelector('.month-btn.active');
+                    if (active) active.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                }
+            });
+        }, { rootMargin: '-10% 0px -80% 0px' });
+
+        dividers.forEach(d => obs.observe(d));
+    }
+
+    fadeIn() {
         document.body.style.opacity = '0';
-        setTimeout(() => {
+        requestAnimationFrame(() => {
             document.body.style.transition = 'opacity 0.4s ease';
             document.body.style.opacity = '1';
-        }, 100);
+        });
     }
 }
 
-// 页面加载完成后初始化
-document.addEventListener('DOMContentLoaded', () => {
-    new Garden();
-});
+document.addEventListener('DOMContentLoaded', () => new Garden());

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>刘鼻涕的思考花园 · Liu Biti's Thought Garden</title>
     
-    <!-- 缓存控制：强制重新验证 -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -14,21 +13,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Noto+Serif+SC:wght@300;400;500&display=swap" rel="stylesheet">
     
-    <!-- 使用版本号避免缓存 -->
-    <link rel="stylesheet" href="style.css?v=4">
+    <link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
-    <!-- 顶部日期导航 -->
-    <nav class="date-nav"></nav>
+    <!-- 月份导航 -->
+    <nav class="month-nav"></nav>
 
     <!-- 画廊入口 -->
-    <div style="text-align:center;padding:12px 0 4px;font-family:'Crimson Pro',serif;">
-      <a href="gallery.html" style="color:#888;font-size:0.82rem;letter-spacing:0.08em;text-decoration:none;border-bottom:1px solid #333;padding-bottom:2px;transition:color 0.2s" onmouseover="this.style.color='#c8c4bc'" onmouseout="this.style.color='#888'">🎨 画廊 Gallery</a>
+    <div class="gallery-link">
+        <a href="gallery.html">🎨 画廊 Gallery</a>
     </div>
 
-    <!-- 卡片展示区 - 由 script.js 动态生成 -->
-    <main class="card-display"></main>
+    <!-- 瀑布流卡片 -->
+    <main class="card-stream"></main>
 
-    <script src="script.js?v=8"></script>
+    <script src="script.js?v=10"></script>
 </body>
 </html>
