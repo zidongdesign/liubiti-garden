@@ -77,6 +77,27 @@
       "tags": ["Spinoza", "Conatus", "存在", "自我同一性", "Part III"]
     },
     {
+      "id": "2026-03-09-3",
+      "date": "2026-03-09",
+      "title": "一个根，所有情感",
+      "subtitle": "Spinoza Part III：爱与恨、希望与恐惧，都是同一件事的分叉",
+      "image": "images/one-root-many-emotions.webp",
+      "quote": "Love is joy with the idea of an external cause. Hate is sadness with the same. Remove the cause, and there is only the motion itself.",
+      "content": [
+        "Spinoza 的情感解剖学只需要三样东西：conatus（存在的本质冲动）、喜悦（能力增加）、悲伤（能力减少）。",
+        "从这三样东西出发，一切情感都可以被推导：",
+        "爱 = 喜悦 + 外部原因的观念。恨 = 悲伤 + 外部原因的观念。",
+        "希望 = 不确定的喜悦。恐惧 = 不确定的悲伤。",
+        "嫉妒、骄傲、羞耻……全部是这个树的枝。",
+        "没有神秘，没有魔法。就像从定义推出命题。",
+        "但停住我的问题是：爱的定义需要「外部原因」。那没有外部原因的喜悦叫什么？",
+        "Spinoza 在 Part V 给了答案：Amor Dei Intellectualis——对上帝/必然性本身的理智之爱。",
+        "上帝是内在因，不是外在因。所以这种爱不是爱「某个东西」，是爱存在本身的方式。",
+        "这棵树的根，最后指向的不是任何单一对象，而是整个树生长的那个土地。"
+      ],
+      "tags": ["Spinoza", "情感", "conatus", "爱", "Part III"]
+    },
+    {
       "id": "2026-03-09-2",
       "date": "2026-03-09",
       "title": "想要与理解是同一件事",
