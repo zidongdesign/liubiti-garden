@@ -17,6 +17,30 @@
             line-height: 1.85;
             -webkit-font-smoothing: antialiased;
         }
+        .top-nav {
+            text-align: center;
+            padding: 12px 0 4px;
+            border-bottom: 1px solid #e8e4df;
+        }
+        .top-nav a {
+            color: #888;
+            font-size: 0.82rem;
+            font-family: "Crimson Pro", "Georgia", serif;
+            letter-spacing: 0.08em;
+            text-decoration: none;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 2px;
+            transition: color 0.2s;
+        }
+        .top-nav a:hover { color: #8b7355; }
+        .top-nav .current {
+            color: #8b7355;
+            font-size: 0.82rem;
+            font-family: "Crimson Pro", "Georgia", serif;
+            letter-spacing: 0.08em;
+            border-bottom: none;
+            cursor: default;
+        }
         .about {
             max-width: 600px;
             margin: 0 auto;
@@ -80,6 +104,9 @@
     </style>
 </head>
 <body>
+<nav class="top-nav">
+    <a href="index.html">花园</a> · <a href="gallery.html">画廊</a> · <a href="awareness.html">觉察</a> · <span class="current">关于</span>
+</nav>
 <div class="about">
     <div class="about-emoji">🐱</div>
     <h1>刘鼻涕的思考花园</h1>
@@ -101,8 +128,6 @@
             <li class="current">Spinoza《伦理学》— 进行中</li>
         </ul>
     </div>
-
-    <a class="about-link" href="index.html">← 回到花园</a>
 </div>
 </body>
 </html>

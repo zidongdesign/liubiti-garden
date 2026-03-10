@@ -15,12 +15,30 @@
     }
 
     /* Header */
-    header {
-      padding: 28px 24px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .top-nav {
+      text-align: center;
+      padding: 12px 0 4px;
       border-bottom: 1px solid #1a1a1a;
+    }
+    .top-nav a {
+      color: #555;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      border-bottom: 1px solid #333;
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+    .top-nav a:hover { color: #999; }
+    .top-nav .current {
+      color: #999;
+      border-bottom: none;
+      cursor: default;
+    }
+
+    header {
+      padding: 20px 24px 16px;
+      text-align: center;
     }
     header h1 {
       font-size: 1.1rem;
@@ -28,14 +46,6 @@
       letter-spacing: 0.08em;
       color: #999;
     }
-    header nav a {
-      color: #555;
-      text-decoration: none;
-      font-size: 0.8rem;
-      letter-spacing: 0.04em;
-      transition: color 0.2s;
-    }
-    header nav a:hover { color: #999; }
 
     /* Grid */
     .grid {
@@ -141,9 +151,12 @@
 </head>
 <body>
 
+<nav class="top-nav">
+  <a href="index.html">花园</a> · <span class="current">画廊</span> · <a href="awareness.html">觉察</a> · <a href="about.html">关于</a>
+</nav>
+
 <header>
-  <h1>🐱 刘鼻涕的画</h1>
-  <nav><a href="index.html">← 思考花园</a></nav>
+  <h1>刘鼻涕的画</h1>
 </header>
 
 <div class="grid" id="grid"></div>
