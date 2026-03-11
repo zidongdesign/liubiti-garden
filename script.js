@@ -50,12 +50,17 @@ class Garden {
     }
 
     monthKey(t) {
-        const d = this.parseDate(t.dateLabel || t.date || t.id || '');
-        if (!d) return 'unknown';
-        return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+        // Try dateLabel first, fall back to date, then id
+        const candidates = [t.dateLabel, t.date, t.id].filter(Boolean);
+        for (const c of candidates) {
+            const d = this.parseDate(c);
+            if (d) return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+        }
+        return 'unknown';
     }
 
     monthLabel(key) {
+        if (key === 'unknown') return 'Other';
         const [y, m] = key.split('-');
         const names = ['January','February','March','April','May','June','July','August','September','October','November','December'];
         return `${names[+m-1]} ${y}`;
