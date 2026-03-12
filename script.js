@@ -124,7 +124,7 @@ class Garden {
         const date = this.formatDate(t);
         const subtitle = t.subtitle ? `<p class="card-subtitle">${t.subtitle}</p>` : '';
         const image = (t.image || t.coverImage)
-            ? `<img data-src="${t.image || t.coverImage}" alt="${t.title}" class="card-cover lazy" loading="lazy">`
+            ? `<img src="${t.image || t.coverImage}" alt="${t.title}" class="card-cover" loading="lazy">`
             : '';
         const quote = t.quote
             ? `<div class="card-quote">"${t.quote}"</div>`
