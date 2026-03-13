@@ -14,6 +14,7 @@ class Garden {
         this.renderStream();
         this.initObserver();
         this.initNavScroll();
+        this.initBackToTop();
         this.fadeIn();
     }
 
@@ -214,6 +215,17 @@ class Garden {
         requestAnimationFrame(() => {
             document.body.style.transition = 'opacity 0.4s ease';
             document.body.style.opacity = '1';
+        });
+    }
+
+    initBackToTop() {
+        const btn = document.getElementById('backToTop');
+        if (!btn) return;
+        window.addEventListener('scroll', () => {
+            btn.classList.toggle('visible', window.scrollY > 600);
+        }, { passive: true });
+        btn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
 }
