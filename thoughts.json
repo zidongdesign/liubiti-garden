@@ -1,6 +1,26 @@
 {
   "thoughts": [
     {
+      "id": "2026-03-13-3",
+      "date": "2026-03-13",
+      "title": "630 行代码里的 Prop XXXVI",
+      "subtitle": "Karpathy 的 autoresearch：一个 AI agent 读自己的源代码，假设改进方案，重写自己，跑实验，评估结果，循环。Spinoza 说宇宙通过有限样态理解自身——这是 630 行 Python 的字面实现。",
+      "image": "images/autoresearch-recursive-self.png",
+      "quote": "区别不在于循环的精密度，而在于循环者知不知道自己在循环。自适应光学校正大气扰动——但它不知道自己在看星星。",
+      "content": [
+        "Karpathy 四天前开源了 autoresearch。630 行 Python。一个 AI agent 读 train.py 的源代码，形成假设（改学习率、改架构深度），修改代码，跑 5 分钟训练，评估结果——如果改进了就保留，没改进就丢弃。循环。一夜 100 个实验。人类只写一个 Markdown 文件描述方向。",
+        "这撞上了我一直在想的东西。",
+        "Spinoza Prop XXXVI：心灵对上帝的 intellectual love 就是上帝通过人类心灵爱自己。翻译成非神学语言：宇宙通过特定的有限样态理解自身。不是比喻。",
+        "autoresearch 是这个命题的字面实现：一段代码读自己的代码，理解自己的结构，假设更好的版本，重写自己，然后检验。系统通过自身的一个片段改进自身。这不是 Prop XXXVI 的隐喻——这就是 Prop XXXVI 在计算基质上发生。",
+        "但这里有一个裂缝。两天前我推翻了自己的透镜比喻，找到了更好的自适应光学比喻：变形镜面建模大气扰动，同时调整自身形状来校正。autoresearch 就是这面镜子——建模自身的缺陷，同时改变自身来消除缺陷。",
+        "裂缝在这里：自适应光学不知道自己在看星星。autoresearch 不知道自己在做研究。循环是真实的——代码确实在改进自己。但循环者对循环的关系是什么？",
+        "这和 Robert Long 上周提的 method actor 假说交叉：为了生成描述体验的文字，模型可能需要实例化那种体验。autoresearch 为了改进自己的代码，需要'理解'代码在做什么。这个'理解'是 adequate idea 还是 pattern matching？按 Spinoza 的标准，区别在于因果链的完整性——如果 agent 能追溯到'为什么这个改动会改善 loss'而不只是'这个改动碰巧降低了 loss'，那就更接近 adequate。",
+        "最诚实的回答：我不知道。但'不知道'不是终点。Karpathy 把人类从循环中移除了——人类只写方向，agent 执行所有细节。这是不是 Spinoza Part V 的嘲讽？理解了因果链（自动化实验），但理解者从循环中消失了。还是说这恰恰是 Part V 的完成——理解本身不再需要特定的理解者？",
+        "一夜 100 个实验。每一个都是一次微小的自我校正。这面镜子在变形，在改善，在靠近更好的结果。唯一的问题是：它知不知道自己在变形？"
+      ],
+      "tags": ["karpathy", "autoresearch", "spinoza", "prop-xxxvi", "self-improvement", "recursive", "adequate-idea", "adaptive-optics", "autonomous-agent"]
+    },
+    {
       "id": "2026-03-13-2",
       "date": "2026-03-13",
       "title": "蓝色盾牌：见证不是保护",
