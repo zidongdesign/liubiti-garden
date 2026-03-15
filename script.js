@@ -186,6 +186,16 @@ class Garden {
         }, { threshold: 0.1 });
 
         document.querySelectorAll('.thought-card').forEach(card => cardObs.observe(card));
+
+        // Fade in cover images on load
+        document.querySelectorAll('img.card-cover').forEach(img => {
+            if (img.complete) {
+                img.classList.add('loaded');
+            } else {
+                img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
+                img.addEventListener('error', () => img.classList.add('loaded'), { once: true });
+            }
+        });
     }
 
     // ===== Scroll-based nav highlight =====

@@ -163,6 +163,12 @@ body {
     border-radius: 3px;
     margin-bottom: var(--spacing-md);
     display: block;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.card-cover.loaded {
+    opacity: 1;
 }
 
 /* ===== Quote（大字引用） ===== */
