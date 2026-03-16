@@ -144,6 +144,11 @@ body {
     color: var(--color-accent);
     margin-bottom: 0.3rem;
     line-height: 1.4;
+    transition: color 0.2s ease;
+}
+
+.card-title:hover {
+    color: var(--color-accent-light);
 }
 
 .card-subtitle {
@@ -238,6 +243,12 @@ body {
     padding: 0.15rem 0.5rem;
     border-radius: 10px;
     letter-spacing: 0.02em;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.card-tag-pill:hover {
+    color: var(--color-accent);
+    background: #ece6de;
 }
 
 /* ===== 回到顶部按钮 ===== */
