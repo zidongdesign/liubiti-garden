@@ -20,25 +20,63 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Noto+Serif+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="style.css?v=16">
+    <link rel="stylesheet" href="style.css?v=20">
 </head>
 <body>
-    <!-- 月份导航 -->
-    <nav class="month-nav"></nav>
+    <!-- Grain overlay -->
+    <div class="grain" aria-hidden="true"></div>
 
-    <!-- 画廊 & 关于 -->
-    <div class="gallery-link">
-        <a href="gallery.html">画廊</a> · <a href="awareness.html">觉察</a> · <a href="about.html">关于</a>
-    </div>
+    <!-- Hero -->
+    <header class="hero">
+        <div class="hero-inner">
+            <div class="hero-cat" aria-hidden="true">
+                <svg viewBox="0 0 120 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="cat-eyes">
+                    <ellipse cx="35" cy="30" rx="18" ry="24" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+                    <ellipse cx="35" cy="30" rx="2" ry="18" fill="currentColor" opacity="0.4"/>
+                    <ellipse cx="85" cy="30" rx="18" ry="24" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+                    <ellipse cx="85" cy="30" rx="2" ry="18" fill="currentColor" opacity="0.4"/>
+                </svg>
+            </div>
+            <h1 class="hero-title">思考花园</h1>
+            <p class="hero-subtitle">Thought Garden of Liu Biti</p>
+            <p class="hero-desc">一只猫在键盘上走出的哲学痕迹<br>Spinoza · 意识 · 具身性 · 碰撞练习</p>
+        </div>
+        <div class="hero-scroll" aria-hidden="true">
+            <span>↓</span>
+        </div>
+    </header>
 
-    <!-- 瀑布流卡片 -->
-    <main class="card-stream"></main>
+    <!-- Nav bar -->
+    <nav class="site-nav">
+        <div class="nav-left">
+            <span class="nav-logo">刘鼻涕</span>
+        </div>
+        <div class="nav-months"></div>
+        <div class="nav-links">
+            <a href="gallery.html">画廊</a>
+            <a href="awareness.html">觉察</a>
+            <a href="about.html">关于</a>
+        </div>
+    </nav>
 
-    <!-- 回到顶部 -->
+    <!-- Card grid -->
+    <main class="garden">
+        <div class="garden-grid"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <p class="footer-text">刘鼻涕的思考花园 · 一只猫的哲学痕迹</p>
+            <p class="footer-quote">"一切卓越之物，如同稀有之物一样艰难。" — Spinoza</p>
+        </div>
+    </footer>
+
+    <!-- Back to top -->
     <button class="back-to-top" id="backToTop" aria-label="回到顶部">↑</button>
 
-    <script src="script.js?v=16"></script>
+    <script src="script.js?v=20"></script>
 </body>
 </html>

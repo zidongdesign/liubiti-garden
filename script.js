@@ -1,9 +1,9 @@
-// 刘鼻涕的思考花园 v2 — 瀑布流 + 月份导航
+// 刘鼻涕的思考花园 v3 — Midnight Garden
 
 class Garden {
     constructor() {
         this.thoughts = [];
-        this.months = [];   // [{label, key, ids}]
+        this.months = [];
         this.init();
     }
 
@@ -11,7 +11,7 @@ class Garden {
         await this.loadThoughts();
         this.buildMonths();
         this.renderNav();
-        this.renderStream();
+        this.renderGrid();
         this.initObserver();
         this.initNavScroll();
         this.initBackToTop();
@@ -29,10 +29,9 @@ class Garden {
         }
     }
 
-    // ===== 日期工具 =====
+    // ===== Date utilities =====
 
     formatDate(t) {
-        // 统一输出 "Mar 7, 2026" 格式
         const raw = t.dateLabel || t.date || t.id || '';
         const d = this.parseDate(raw);
         if (!d) return raw;
@@ -41,7 +40,6 @@ class Garden {
     }
 
     parseDate(str) {
-        // Handle "2026-03-07", "2026年3月4日", "2026-03-07-2"
         let m;
         m = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
         if (m) return new Date(+m[1], +m[2]-1, +m[3]);
@@ -51,7 +49,6 @@ class Garden {
     }
 
     monthKey(t) {
-        // Try dateLabel first, fall back to date, then id
         const candidates = [t.dateLabel, t.date, t.id].filter(Boolean);
         for (const c of candidates) {
             const d = this.parseDate(c);
@@ -67,7 +64,14 @@ class Garden {
         return `${names[+m-1]} ${y}`;
     }
 
-    // ===== 按月分组 =====
+    monthShortLabel(key) {
+        if (key === 'unknown') return '?';
+        const [y, m] = key.split('-');
+        const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        return `${names[+m-1]} '${y.slice(2)}`;
+    }
+
+    // ===== Build months =====
 
     buildMonths() {
         const map = new Map();
@@ -79,17 +83,30 @@ class Garden {
         this.months = [...map.entries()].map(([key, ids]) => ({
             key,
             label: this.monthLabel(key),
+            shortLabel: this.monthShortLabel(key),
             ids
         }));
     }
 
-    // ===== 渲染月份导航 =====
+    // ===== Determine featured cards =====
+
+    isFeatured(t) {
+        // Featured: has image AND (long content OR has quote OR many tags)
+        const hasImage = !!(t.image || t.coverImage);
+        const contentLength = Array.isArray(t.content) ? t.content.length : 0;
+        const hasQuote = !!t.quote;
+        const manyTags = Array.isArray(t.tags) && t.tags.length >= 6;
+
+        return hasImage && (contentLength >= 5 || hasQuote || manyTags);
+    }
+
+    // ===== Render nav =====
 
     renderNav() {
-        const nav = document.querySelector('.month-nav');
+        const nav = document.querySelector('.nav-months');
         if (!nav) return;
         nav.innerHTML = this.months.map((m, i) => `
-            <button class="month-btn${i===0?' active':''}" data-month="${m.key}">${m.label}</button>
+            <button class="month-btn${i===0?' active':''}" data-month="${m.key}">${m.shortLabel}</button>
         `).join('');
 
         nav.querySelectorAll('.month-btn').forEach(btn => {
@@ -100,33 +117,41 @@ class Garden {
         });
     }
 
-    // ===== 渲染瀑布流 =====
+    // ===== Render grid =====
 
-    renderStream() {
-        const container = document.querySelector('.card-stream');
+    renderGrid() {
+        const container = document.querySelector('.garden-grid');
         if (!container) return;
 
         let html = '';
         let currentMonth = null;
+        let cardIndex = 0;
 
         for (const t of this.thoughts) {
             const mk = this.monthKey(t);
             if (mk !== currentMonth) {
                 currentMonth = mk;
-                html += `<div class="month-divider" id="month-${mk}">${this.monthLabel(mk)}</div>`;
+                html += `
+                    <div class="month-divider" id="month-${mk}">
+                        <span class="month-divider-label">${this.monthLabel(mk)}</span>
+                        <span class="month-divider-line"></span>
+                    </div>`;
             }
-            html += this.createCardHTML(t);
+            html += this.createCardHTML(t, cardIndex);
+            cardIndex++;
         }
 
         container.innerHTML = html;
     }
 
-    createCardHTML(t) {
+    createCardHTML(t, index) {
         const date = this.formatDate(t);
+        const featured = this.isFeatured(t);
+        const hasImage = !!(t.image || t.coverImage);
+        const imgSrc = t.image || t.coverImage || '';
+
         const subtitle = t.subtitle ? `<p class="card-subtitle">${t.subtitle}</p>` : '';
-        const image = (t.image || t.coverImage)
-            ? `<img src="${t.image || t.coverImage}" alt="${t.title}" class="card-cover" loading="lazy">`
-            : '';
+
         const quote = t.quote
             ? `<div class="card-quote">"${t.quote}"</div>`
             : '';
@@ -139,42 +164,74 @@ class Garden {
             return '';
         }).join('') : '';
 
+        // For non-featured, truncate visible content
+        const displayContent = featured ? content : this.truncateContent(t);
+
         const tags = Array.isArray(t.tags) && t.tags.length
             ? `<div class="card-tags">${t.tags.map(tg => `<span class="card-tag-pill">${tg}</span>`).join('')}</div>`
             : '';
 
+        let classes = 'thought-card';
+        if (featured) classes += ' featured';
+        if (!hasImage) classes += ' text-only';
+
+        if (featured && hasImage) {
+            return `
+                <article class="${classes}" id="card-${t.id}">
+                    <div class="card-visual">
+                        <img src="${imgSrc}" alt="${t.title || ''}" class="card-cover" loading="lazy">
+                    </div>
+                    <div class="card-body">
+                        <time class="card-date">${date}</time>
+                        <h2 class="card-title">${t.title || ''}</h2>
+                        ${subtitle}
+                        ${quote}
+                        <div class="card-content">${displayContent}</div>
+                        ${tags}
+                    </div>
+                </article>`;
+        }
+
+        // Standard card
+        const imageHTML = hasImage
+            ? `<div class="card-visual"><img src="${imgSrc}" alt="${t.title || ''}" class="card-cover" loading="lazy"></div>`
+            : '';
+
         return `
-            <article class="thought-card" id="card-${t.id}">
-                <time class="card-date">${date}</time>
-                <h2 class="card-title">${t.title}</h2>
-                ${subtitle}
-                ${image}
-                ${quote}
-                <div class="card-content">${content}</div>
-                ${tags}
-            </article>
-        `;
+            <article class="${classes}" id="card-${t.id}">
+                ${imageHTML}
+                <div class="card-body">
+                    <time class="card-date">${date}</time>
+                    <h2 class="card-title">${t.title || ''}</h2>
+                    ${subtitle}
+                    ${quote}
+                    <div class="card-content">${displayContent}</div>
+                    ${tags}
+                </div>
+            </article>`;
     }
 
-    // ===== Intersection Observer (lazy load + fade in + nav highlight) =====
+    truncateContent(t) {
+        if (!Array.isArray(t.content)) return '';
+        // Show first 2 blocks for non-featured
+        const items = t.content.slice(0, 2);
+        let html = items.map(item => {
+            if (typeof item === 'string') return `<p class="card-text">${item}</p>`;
+            if (item.type === 'insight') return `<p class="card-insight">${(item.text||'').replace(/\n/g,'<br>')}</p>`;
+            if (item.type === 'quote') return `<blockquote class="card-blockquote">${(item.text||'').replace(/\n/g,'<br>')}</blockquote>`;
+            if (item.type === 'list') return `<ul class="card-list">${(item.items||[]).map(li=>`<li>${li}</li>`).join('')}</ul>`;
+            return '';
+        }).join('');
+
+        if (t.content.length > 2) {
+            html += `<p class="card-text" style="color:var(--color-text-dim);font-style:italic;font-size:0.8rem;">…</p>`;
+        }
+        return html;
+    }
+
+    // ===== Observers =====
 
     initObserver() {
-        // Lazy images
-        const imgObs = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (e.isIntersecting) {
-                    const img = e.target;
-                    if (img.dataset.src) {
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                    }
-                    imgObs.unobserve(img);
-                }
-            });
-        }, { rootMargin: '300px' });
-
-        document.querySelectorAll('img.lazy').forEach(img => imgObs.observe(img));
-
         // Fade in cards
         const cardObs = new IntersectionObserver((entries) => {
             entries.forEach(e => {
@@ -183,13 +240,13 @@ class Garden {
                     cardObs.unobserve(e.target);
                 }
             });
-        }, { threshold: 0.1 });
+        }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 
         document.querySelectorAll('.thought-card').forEach(card => cardObs.observe(card));
 
         // Fade in cover images on load
         document.querySelectorAll('img.card-cover').forEach(img => {
-            if (img.complete) {
+            if (img.complete && img.naturalWidth > 0) {
                 img.classList.add('loaded');
             } else {
                 img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
@@ -210,7 +267,6 @@ class Garden {
                 if (e.isIntersecting) {
                     const mk = e.target.id.replace('month-', '');
                     btns.forEach(b => b.classList.toggle('active', b.dataset.month === mk));
-                    // scroll nav button into view
                     const active = document.querySelector('.month-btn.active');
                     if (active) active.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
                 }
@@ -223,7 +279,7 @@ class Garden {
     fadeIn() {
         document.body.style.opacity = '0';
         requestAnimationFrame(() => {
-            document.body.style.transition = 'opacity 0.4s ease';
+            document.body.style.transition = 'opacity 0.5s ease';
             document.body.style.opacity = '1';
         });
     }
