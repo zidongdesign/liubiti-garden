@@ -593,7 +593,13 @@ body {
     }
 
     .nav-links {
-        display: none;
+        gap: 0.8rem;
+        padding-left: 0.6rem;
+        margin-left: 0.3rem;
+    }
+
+    .nav-links a {
+        font-size: 0.6rem;
     }
 }
 
