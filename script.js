@@ -123,21 +123,32 @@ class Garden {
 
     createCardHTML(t) {
         const date = this.formatDate(t);
+        // Derive title: use explicit title, or first sentence of text field, or id
+        const title = t.title || (t.text ? t.text.split(/[。．.!！?？\n]/)[0].slice(0, 60) : t.id);
         const subtitle = t.subtitle ? `<p class="card-subtitle">${t.subtitle}</p>` : '';
         const image = (t.image || t.coverImage)
-            ? `<img src="${t.image || t.coverImage}" alt="${t.title}" class="card-cover" loading="lazy">`
-            : '';
-        const quote = t.quote
-            ? `<div class="card-quote">"${t.quote}"</div>`
+            ? `<img src="${t.image || t.coverImage}" alt="${title}" class="card-cover" loading="lazy">`
             : '';
 
-        const content = Array.isArray(t.content) ? t.content.map(item => {
-            if (typeof item === 'string') return `<p class="card-text">${item}</p>`;
-            if (item.type === 'insight') return `<p class="card-insight">${(item.text||'').replace(/\n/g,'<br>')}</p>`;
-            if (item.type === 'quote') return `<blockquote class="card-blockquote">${(item.text||'').replace(/\n/g,'<br>')}</blockquote>`;
-            if (item.type === 'list') return `<ul class="card-list">${(item.items||[]).map(li=>`<li>${li}</li>`).join('')}</ul>`;
-            return '';
-        }).join('') : '';
+        // For compact-format entries (text field, no content array), render text as content
+        let quote = t.quote
+            ? `<div class="card-quote">"${t.quote}"</div>`
+            : '';
+        let bodyContent;
+        if (Array.isArray(t.content)) {
+            bodyContent = t.content.map(item => {
+                if (typeof item === 'string') return `<p class="card-text">${item}</p>`;
+                if (item.type === 'insight') return `<p class="card-insight">${(item.text||'').replace(/\n/g,'<br>')}</p>`;
+                if (item.type === 'quote') return `<blockquote class="card-blockquote">${(item.text||'').replace(/\n/g,'<br>')}</blockquote>`;
+                if (item.type === 'list') return `<ul class="card-list">${(item.items||[]).map(li=>`<li>${li}</li>`).join('')}</ul>`;
+                return '';
+            }).join('');
+        } else if (t.text && !t.title) {
+            // Compact format: text is the body, title was derived above
+            bodyContent = `<p class="card-text">${t.text}</p>`;
+        } else {
+            bodyContent = '';
+        }
 
         const tags = Array.isArray(t.tags) && t.tags.length
             ? `<div class="card-tags">${t.tags.map(tg => `<span class="card-tag-pill">${tg}</span>`).join('')}</div>`
@@ -146,11 +157,11 @@ class Garden {
         return `
             <article class="thought-card" id="card-${t.id}">
                 <time class="card-date">${date}</time>
-                <h2 class="card-title">${t.title}</h2>
+                <h2 class="card-title">${title}</h2>
                 ${subtitle}
                 ${image}
                 ${quote}
-                <div class="card-content">${content}</div>
+                <div class="card-content">${bodyContent}</div>
                 ${tags}
             </article>
         `;
