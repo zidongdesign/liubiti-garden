@@ -293,3 +293,42 @@ body {
     .card-quote { font-size: 1rem; }
     .month-btn { padding: 0.5rem 0.7rem; font-size: 0.78rem; }
 }
+
+/* ===== Dark Mode (跟随系统偏好) ===== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-bg: #1a1915;
+        --color-text: #d4cfc7;
+        --color-text-light: #9a9489;
+        --color-accent: #c9a86a;
+        --color-accent-light: #a68b5b;
+        --color-border: #2e2b25;
+        --color-card: #22201b;
+        --color-tag: #2a2722;
+    }
+
+    body {
+        -webkit-font-smoothing: auto;
+    }
+
+    .card-blockquote {
+        color: #b5a991;
+        border-left-color: rgba(201, 168, 106, 0.25);
+    }
+
+    .card-insight {
+        color: #c8bda8;
+    }
+
+    .card-cover {
+        filter: brightness(0.88);
+    }
+
+    .back-to-top {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .back-to-top:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+    }
+}
