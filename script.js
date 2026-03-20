@@ -127,7 +127,7 @@ class Garden {
         const title = t.title || (t.text ? t.text.split(/[。．.!！?？\n]/)[0].slice(0, 60) : t.id);
         const subtitle = t.subtitle ? `<p class="card-subtitle">${t.subtitle}</p>` : '';
         const imgSrc = t.image || t.coverImage;
-        const thumbSrc = imgSrc ? imgSrc.replace('images/', 'images/thumbs/') : null;
+        const thumbSrc = imgSrc ? imgSrc.replace('images/', 'images/thumbs/').replace(/\.png$/, '.webp') : null;
         const image = imgSrc
             ? `<img src="${thumbSrc}" alt="${title}" class="card-cover" loading="lazy" onerror="this.onerror=null;this.src='${imgSrc}'">`
             : '';

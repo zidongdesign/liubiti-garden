@@ -192,7 +192,7 @@
   function thumbUrl(img) {
     // images/foo.webp → images/thumbs/foo.webp
     if (!img) return '';
-    return img.replace('images/', 'images/thumbs/');
+    return img.replace('images/', 'images/thumbs/').replace(/\.png$/, '.webp');
   }
 
   function render() {
