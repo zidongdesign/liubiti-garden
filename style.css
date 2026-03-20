@@ -286,6 +286,39 @@ body {
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
+/* ===== 页脚 ===== */
+.garden-footer {
+    text-align: center;
+    padding: var(--spacing-xl) var(--spacing-md) var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.footer-cat {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    opacity: 0.7;
+}
+
+.footer-text {
+    font-family: var(--font-serif-zh);
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.2rem;
+}
+
+.footer-sub {
+    font-family: var(--font-serif-en);
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    font-style: italic;
+    opacity: 0.6;
+    letter-spacing: 0.04em;
+}
+
 /* ===== 响应式 ===== */
 @media (max-width: 600px) {
     .card-stream { padding: var(--spacing-md) var(--spacing-sm); }
