@@ -126,8 +126,10 @@ class Garden {
         // Derive title: use explicit title, or first sentence of text field, or id
         const title = t.title || (t.text ? t.text.split(/[。．.!！?？\n]/)[0].slice(0, 60) : t.id);
         const subtitle = t.subtitle ? `<p class="card-subtitle">${t.subtitle}</p>` : '';
-        const image = (t.image || t.coverImage)
-            ? `<img src="${t.image || t.coverImage}" alt="${title}" class="card-cover" loading="lazy">`
+        const imgSrc = t.image || t.coverImage;
+        const thumbSrc = imgSrc ? imgSrc.replace('images/', 'images/thumbs/') : null;
+        const image = imgSrc
+            ? `<img src="${thumbSrc}" alt="${title}" class="card-cover" loading="lazy" onerror="this.onerror=null;this.src='${imgSrc}'">`
             : '';
 
         // For compact-format entries (text field, no content array), render text as content
