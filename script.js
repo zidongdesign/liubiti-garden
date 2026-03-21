@@ -264,6 +264,8 @@ class Garden {
         // Click on card cover image → share overlay
         document.addEventListener('click', (e) => {
             if (!e.target.classList.contains('card-cover')) return;
+            e.preventDefault();
+            e.stopPropagation();
             const card = e.target.closest('.thought-card');
             if (!card) return;
             const t = getThought(card);
@@ -290,26 +292,22 @@ class Garden {
         const canvas = overlay.querySelector('.share-canvas');
         await this.renderShareImage(canvas, thought);
 
-        // Save button
+        // Save/share button
         overlay.querySelector('.share-save').addEventListener('click', async () => {
             const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
             const file = new File([blob], `${thought.id || 'share'}.png`, { type: 'image/png' });
 
-            // Try native share (iOS/Android)
+            // Use native share on iOS/Android
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 try {
                     await navigator.share({ files: [file] });
-                    return;
-                } catch (e) { /* user cancelled, fall through */ }
+                } catch (e) { /* user cancelled */ }
+            } else {
+                // Desktop fallback: open in new tab for right-click save
+                const url = URL.createObjectURL(blob);
+                window.open(url, '_blank');
+                setTimeout(() => URL.revokeObjectURL(url), 30000);
             }
-
-            // Fallback: blob URL download
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.download = file.name;
-            link.href = url;
-            link.click();
-            setTimeout(() => URL.revokeObjectURL(url), 5000);
         });
 
         // Close
@@ -360,23 +358,15 @@ class Garden {
         const bodyFont = `300 26px "Noto Serif SC", "PingFang SC", serif`;
         const sigFont = `300 20px "Crimson Pro", "PingFang SC", serif`;
 
+        // Title only, no body text
         const title = thought.title || '';
-        const body = thought.body || thought.text || '';
-        // One short sentence for share card
-        const firstSentence = body.split(/[。．.!！?？\n]/)[0] || '';
-        const bodyShort = firstSentence.length > 60 ? firstSentence.slice(0, 57) + '…' : firstSentence;
 
         ctx.font = titleFont;
         const titleLines = this.wrapText(ctx, title, W - PAD * 2);
 
-        ctx.font = bodyFont;
-        const bodyLines = this.wrapText(ctx, bodyShort, W - PAD * 2);
-
         const textTop = (img ? IMG_H : 0) + 56;
         const titleH = titleLines.length * 56;
-        const bodyTop = textTop + titleH + 20;
-        const bodyH = bodyLines.length * 42;
-        const sigTop = bodyTop + bodyH + 40;
+        const sigTop = textTop + titleH + 32;
         const totalH = sigTop + 30 + 56;
 
         // Set final canvas size
@@ -406,14 +396,7 @@ class Garden {
             ctx.fillText(line, PAD, textTop + i * 56);
         });
 
-        // Body
-        ctx.fillStyle = TEXT;
-        ctx.font = bodyFont;
-        bodyLines.forEach((line, i) => {
-            ctx.fillText(line, PAD, bodyTop + i * 42);
-        });
-
-        // Signature
+        // Signature (no body text)
         ctx.fillStyle = TEXT_LIGHT;
         ctx.font = sigFont;
         ctx.fillText('🐱 刘鼻涕 · liubiti.garden', PAD, sigTop);
