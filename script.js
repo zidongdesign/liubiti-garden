@@ -11,9 +11,9 @@ class Garden {
 
     async init() {
         await this.loadThoughts();
+        this.initObserver();
         this.renderBatch();
         this.initInfiniteScroll();
-        this.initObserver();
         this.initBackToTop();
         this.initShareCard();
         this.fadeIn();
