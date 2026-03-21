@@ -256,42 +256,19 @@ class Garden {
     // ===== 长按分享 =====
 
     initShareCard() {
-        let timer = null;
-        let triggered = false;
-        const LONG_PRESS_MS = 600;
-
-        const findCard = (el) => {
-            while (el && !el.classList.contains('thought-card')) el = el.parentElement;
-            return el;
-        };
-
         const getThought = (cardEl) => {
             const id = cardEl.id.replace('card-', '');
             return this.thoughts.find(t => t.id === id);
         };
 
-        // Disable native long-press on card images
-        document.addEventListener('contextmenu', (e) => {
-            if (findCard(e.target)) e.preventDefault();
-        });
-
-        // Touch events (mobile)
-        document.addEventListener('touchstart', (e) => {
-            const card = findCard(e.target);
+        // Click on card cover image → share overlay
+        document.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('card-cover')) return;
+            const card = e.target.closest('.thought-card');
             if (!card) return;
-            triggered = false;
-            timer = setTimeout(() => {
-                triggered = true;
-                const t = getThought(card);
-                if (t) this.showShareOverlay(t);
-            }, LONG_PRESS_MS);
-        }, { passive: true });
-
-        document.addEventListener('touchend', (e) => {
-            clearTimeout(timer);
-            if (triggered) { e.preventDefault(); triggered = false; }
+            const t = getThought(card);
+            if (t) this.showShareOverlay(t);
         });
-        document.addEventListener('touchmove', () => { clearTimeout(timer); });
     }
 
     async showShareOverlay(thought) {

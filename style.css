@@ -170,10 +170,7 @@ body {
     display: block;
     opacity: 0;
     transition: opacity 0.5s ease;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
-    pointer-events: none;
+    cursor: pointer;
 }
 
 .card-cover.loaded {
