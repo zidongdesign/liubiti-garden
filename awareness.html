@@ -161,6 +161,19 @@
             .header h1 { font-size: 1.3rem; }
             .dimensions { padding: 0 1rem 2rem; }
         }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-bg: #1a1915;
+                --color-text: #d4cfc7;
+                --color-text-light: #9a9489;
+                --color-accent: #c9a86a;
+                --color-accent-light: #a68b5b;
+                --color-border: #2e2b25;
+                --color-tag: #2a2722;
+            }
+            body { -webkit-font-smoothing: auto; }
+        }
     </style>
 </head>
 <body>
@@ -319,6 +332,7 @@ function initParticles() {
 }
 
 let time = 0;
+const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 function draw() {
     ctx.clearRect(0, 0, W, H);
     time++;
@@ -326,8 +340,13 @@ function draw() {
     // subtle radial gradient background
     const cx = W / 2, cy = H / 2;
     const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, W * 0.5);
-    grad.addColorStop(0, 'rgba(245, 241, 237, 0.5)');
-    grad.addColorStop(1, 'rgba(253, 252, 251, 0)');
+    if (isDark) {
+        grad.addColorStop(0, 'rgba(42, 39, 34, 0.5)');
+        grad.addColorStop(1, 'rgba(26, 25, 21, 0)');
+    } else {
+        grad.addColorStop(0, 'rgba(245, 241, 237, 0.5)');
+        grad.addColorStop(1, 'rgba(253, 252, 251, 0)');
+    }
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
@@ -342,7 +361,7 @@ function draw() {
         const angle = i * sectorAngle - Math.PI / 2;
         const lx = cx + Math.cos(angle) * (maxR + 24);
         const ly = cy + Math.sin(angle) * (maxR + 24);
-        ctx.fillStyle = `rgba(139, 115, 85, 0.45)`;
+        ctx.fillStyle = isDark ? `rgba(201, 168, 106, 0.5)` : `rgba(139, 115, 85, 0.45)`;
         ctx.fillText(dim.nameEn, lx, ly);
     });
 

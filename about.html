@@ -82,6 +82,18 @@
         .readings .current::before {
             content: "🔖 ";
         }
+
+        /* Dark Mode */
+        @media (prefers-color-scheme: dark) {
+            body { background: #1a1915; color: #d4cfc7; }
+            .about-title { color: #c9a86a; }
+            .about-subtitle { color: #9a9489; }
+            .about-link { color: #c9a86a; }
+            .about-link:hover { color: #d4cfc7; }
+            .about-section-title { color: #c9a86a; }
+            .about-text { color: #d4cfc7; }
+            .readings li { color: #d4cfc7; }
+        }
     </style>
 </head>
 <body>
