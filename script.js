@@ -15,6 +15,7 @@ class Garden {
         this.initObserver();
         this.initNavScroll();
         this.initBackToTop();
+        this.initShareCard();
         this.fadeIn();
     }
 
@@ -250,6 +251,214 @@ class Garden {
         btn.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
+    }
+}
+
+    // ===== 长按分享 =====
+
+    initShareCard() {
+        let timer = null;
+        const LONG_PRESS_MS = 600;
+
+        const findCard = (el) => {
+            while (el && !el.classList.contains('thought-card')) el = el.parentElement;
+            return el;
+        };
+
+        const getThought = (cardEl) => {
+            const id = cardEl.id.replace('card-', '');
+            return this.thoughts.find(t => t.id === id);
+        };
+
+        // Touch events (mobile)
+        document.addEventListener('touchstart', (e) => {
+            const card = findCard(e.target);
+            if (!card) return;
+            timer = setTimeout(() => {
+                e.preventDefault();
+                const t = getThought(card);
+                if (t) this.showShareOverlay(t);
+            }, LONG_PRESS_MS);
+        }, { passive: false });
+
+        document.addEventListener('touchend', () => clearTimeout(timer));
+        document.addEventListener('touchmove', () => clearTimeout(timer));
+
+        // Context menu (desktop right-click or long-press fallback)
+        document.addEventListener('contextmenu', (e) => {
+            const card = findCard(e.target);
+            if (!card) return;
+            const t = getThought(card);
+            if (t) {
+                e.preventDefault();
+                this.showShareOverlay(t);
+            }
+        });
+    }
+
+    async showShareOverlay(thought) {
+        // Create overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'share-overlay';
+        overlay.innerHTML = `
+            <div class="share-container">
+                <canvas class="share-canvas"></canvas>
+                <div class="share-actions">
+                    <button class="share-btn share-save">保存图片</button>
+                    <button class="share-btn share-close">关闭</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        requestAnimationFrame(() => overlay.classList.add('visible'));
+
+        const canvas = overlay.querySelector('.share-canvas');
+        await this.renderShareImage(canvas, thought);
+
+        // Save button
+        overlay.querySelector('.share-save').addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = `${thought.id || 'share'}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+
+        // Close
+        const close = () => {
+            overlay.classList.remove('visible');
+            setTimeout(() => overlay.remove(), 300);
+        };
+        overlay.querySelector('.share-close').addEventListener('click', close);
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) close();
+        });
+    }
+
+    async renderShareImage(canvas, thought) {
+        const W = 1080;
+        const PAD = 72;
+        const IMG_H = 1080;
+        const ctx = canvas.getContext('2d');
+
+        // Colors matching garden theme
+        const BG = '#fdfcfb';
+        const TEXT = '#3a3a3a';
+        const TEXT_LIGHT = '#737373';
+        const ACCENT = '#8b7355';
+
+        // Load image first to measure total height
+        const imgSrc = thought.image;
+        let img = null;
+        if (imgSrc) {
+            img = await new Promise((resolve) => {
+                const i = new Image();
+                i.crossOrigin = 'anonymous';
+                i.onload = () => resolve(i);
+                i.onerror = () => resolve(null);
+                // Use full image, not thumb
+                i.src = imgSrc;
+            });
+        }
+
+        // Measure text to determine canvas height
+        // We'll use a temp canvas for measurement
+        canvas.width = W;
+        canvas.height = 2400; // temp
+        ctx.textBaseline = 'top';
+
+        // Title
+        const titleFont = `500 42px "Noto Serif SC", "PingFang SC", serif`;
+        const bodyFont = `300 26px "Noto Serif SC", "PingFang SC", serif`;
+        const sigFont = `300 20px "Crimson Pro", "PingFang SC", serif`;
+
+        const title = thought.title || '';
+        const body = thought.body || thought.text || '';
+        // Truncate body for share card
+        const bodyShort = body.length > 150 ? body.slice(0, 147) + '…' : body;
+
+        ctx.font = titleFont;
+        const titleLines = this.wrapText(ctx, title, W - PAD * 2);
+
+        ctx.font = bodyFont;
+        const bodyLines = this.wrapText(ctx, bodyShort, W - PAD * 2);
+
+        const textTop = (img ? IMG_H : 0) + 56;
+        const titleH = titleLines.length * 56;
+        const bodyTop = textTop + titleH + 20;
+        const bodyH = bodyLines.length * 42;
+        const sigTop = bodyTop + bodyH + 40;
+        const totalH = sigTop + 30 + 56;
+
+        // Set final canvas size
+        canvas.width = W;
+        canvas.height = totalH;
+        ctx.textBaseline = 'top';
+
+        // Background
+        ctx.fillStyle = BG;
+        ctx.fillRect(0, 0, W, totalH);
+
+        // Image
+        if (img) {
+            // Draw image covering 1080x1080
+            const scale = Math.max(IMG_H / img.naturalHeight, W / img.naturalWidth);
+            const sw = img.naturalWidth * scale;
+            const sh = img.naturalHeight * scale;
+            const sx = (W - sw) / 2;
+            const sy = (IMG_H - sh) / 2;
+            ctx.drawImage(img, sx, sy, sw, sh);
+        }
+
+        // Title
+        ctx.fillStyle = ACCENT;
+        ctx.font = titleFont;
+        titleLines.forEach((line, i) => {
+            ctx.fillText(line, PAD, textTop + i * 56);
+        });
+
+        // Body
+        ctx.fillStyle = TEXT;
+        ctx.font = bodyFont;
+        bodyLines.forEach((line, i) => {
+            ctx.fillText(line, PAD, bodyTop + i * 42);
+        });
+
+        // Signature
+        ctx.fillStyle = TEXT_LIGHT;
+        ctx.font = sigFont;
+        ctx.fillText('🐱 刘鼻涕 · liubiti.garden', PAD, sigTop);
+
+        // Subtle top line on text area
+        if (img) {
+            ctx.strokeStyle = '#e8e4df';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(PAD, textTop - 24);
+            ctx.lineTo(W - PAD, textTop - 24);
+            ctx.stroke();
+        }
+    }
+
+    wrapText(ctx, text, maxWidth) {
+        const lines = [];
+        // Split on explicit newlines first
+        const paragraphs = text.split('\n');
+        for (const para of paragraphs) {
+            if (!para.trim()) { lines.push(''); continue; }
+            let currentLine = '';
+            for (const char of para) {
+                const testLine = currentLine + char;
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && currentLine) {
+                    lines.push(currentLine);
+                    currentLine = char;
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            if (currentLine) lines.push(currentLine);
+        }
+        return lines;
     }
 }
 
