@@ -252,7 +252,6 @@ class Garden {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
-}
 
     // ===== 长按分享 =====
 
