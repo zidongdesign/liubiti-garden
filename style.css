@@ -91,6 +91,12 @@ body {
     transition: color 0.2s;
 }
 .gallery-link a:hover { color: var(--color-accent); }
+.gallery-link .current {
+    color: var(--color-accent);
+    font-size: 0.82rem;
+    font-family: var(--font-serif-en);
+    text-decoration: none;
+}
 
 /* ===== 瀑布流卡片区域 ===== */
 .card-stream {
