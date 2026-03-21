@@ -98,6 +98,30 @@ body {
     text-decoration: none;
 }
 
+/* ===== 统一导航栏 ===== */
+.top-nav {
+    text-align: center;
+    padding: 12px 0 4px;
+    border-bottom: 1px solid var(--color-border);
+}
+.top-nav a {
+    color: #888;
+    font-size: 0.82rem;
+    font-family: var(--font-serif-en);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.top-nav a:hover { color: var(--color-accent); }
+.top-nav .current {
+    color: var(--color-accent);
+    font-size: 0.82rem;
+    font-family: var(--font-serif-en);
+    letter-spacing: 0.08em;
+    border-bottom: none;
+    cursor: default;
+}
+
 /* ===== 瀑布流卡片区域 ===== */
 .card-stream {
     max-width: 720px;
