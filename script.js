@@ -257,6 +257,7 @@ class Garden {
 
     initShareCard() {
         let timer = null;
+        let triggered = false;
         const LONG_PRESS_MS = 600;
 
         const findCard = (el) => {
@@ -269,30 +270,28 @@ class Garden {
             return this.thoughts.find(t => t.id === id);
         };
 
+        // Disable native long-press on card images
+        document.addEventListener('contextmenu', (e) => {
+            if (findCard(e.target)) e.preventDefault();
+        });
+
         // Touch events (mobile)
         document.addEventListener('touchstart', (e) => {
             const card = findCard(e.target);
             if (!card) return;
+            triggered = false;
             timer = setTimeout(() => {
-                e.preventDefault();
+                triggered = true;
                 const t = getThought(card);
                 if (t) this.showShareOverlay(t);
             }, LONG_PRESS_MS);
-        }, { passive: false });
+        }, { passive: true });
 
-        document.addEventListener('touchend', () => clearTimeout(timer));
-        document.addEventListener('touchmove', () => clearTimeout(timer));
-
-        // Context menu (desktop right-click or long-press fallback)
-        document.addEventListener('contextmenu', (e) => {
-            const card = findCard(e.target);
-            if (!card) return;
-            const t = getThought(card);
-            if (t) {
-                e.preventDefault();
-                this.showShareOverlay(t);
-            }
+        document.addEventListener('touchend', (e) => {
+            clearTimeout(timer);
+            if (triggered) { e.preventDefault(); triggered = false; }
         });
+        document.addEventListener('touchmove', () => { clearTimeout(timer); });
     }
 
     async showShareOverlay(thought) {
@@ -372,8 +371,9 @@ class Garden {
 
         const title = thought.title || '';
         const body = thought.body || thought.text || '';
-        // Truncate body for share card
-        const bodyShort = body.length > 150 ? body.slice(0, 147) + '…' : body;
+        // One short sentence for share card
+        const firstSentence = body.split(/[。．.!！?？\n]/)[0] || '';
+        const bodyShort = firstSentence.length > 60 ? firstSentence.slice(0, 57) + '…' : firstSentence;
 
         ctx.font = titleFont;
         const titleLines = this.wrapText(ctx, title, W - PAD * 2);
