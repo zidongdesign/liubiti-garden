@@ -146,8 +146,12 @@ class Garden {
                 if (item.type === 'list') return `<ul class="card-list">${(item.items||[]).map(li=>`<li>${li}</li>`).join('')}</ul>`;
                 return '';
             }).join('');
-        } else if (t.text && !t.title) {
-            // Compact format: text is the body, title was derived above
+        } else if (t.body) {
+            // body field: split paragraphs on double newline
+            bodyContent = t.body.split(/\n\n+/).map(p => 
+                `<p class="card-text">${p.replace(/\n/g,'<br>')}</p>`
+            ).join('');
+        } else if (t.text) {
             bodyContent = `<p class="card-text">${t.text}</p>`;
         } else {
             bodyContent = '';
