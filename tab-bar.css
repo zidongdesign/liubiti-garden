@@ -1,0 +1,70 @@
+/* tab-bar.css — 共享底部浮动 Tab Bar（iOS 26 胶囊风格） */
+
+.tab-bar {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    gap: 4px;
+    padding: 6px;
+    border-radius: 22px;
+    background: rgba(253, 252, 251, 0.65);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    box-shadow: 0 2px 20px rgba(0,0,0,0.08), 0 0 0 0.5px rgba(0,0,0,0.06);
+}
+
+.tab-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 36px;
+    border-radius: 16px;
+    text-decoration: none;
+    color: #999;
+    background: transparent;
+    transition: color 0.2s ease, background 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.tab-item:hover {
+    color: #8b7355;
+    background: rgba(139, 115, 85, 0.06);
+}
+
+.tab-item.active {
+    color: #8b7355;
+    background: rgba(139, 115, 85, 0.12);
+}
+
+.tab-icon {
+    width: 20px;
+    height: 20px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .tab-bar {
+        background: rgba(34, 32, 27, 0.72);
+        box-shadow: 0 2px 20px rgba(0,0,0,0.3), 0 0 0 0.5px rgba(255,255,255,0.06);
+    }
+
+    .tab-item {
+        color: #666;
+    }
+
+    .tab-item:hover {
+        color: #c9a86a;
+        background: rgba(201, 168, 106, 0.08);
+    }
+
+    .tab-item.active {
+        color: #c9a86a;
+        background: rgba(201, 168, 106, 0.15);
+    }
+}
