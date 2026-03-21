@@ -279,7 +279,7 @@ class Garden {
             <div class="share-container">
                 <canvas class="share-canvas"></canvas>
                 <div class="share-actions">
-                    <button class="share-btn share-save">保存图片</button>
+                    <button class="share-btn share-save">分享</button>
                     <button class="share-btn share-close">关闭</button>
                 </div>
             </div>
