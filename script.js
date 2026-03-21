@@ -291,11 +291,25 @@ class Garden {
         await this.renderShareImage(canvas, thought);
 
         // Save button
-        overlay.querySelector('.share-save').addEventListener('click', () => {
+        overlay.querySelector('.share-save').addEventListener('click', async () => {
+            const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+            const file = new File([blob], `${thought.id || 'share'}.png`, { type: 'image/png' });
+
+            // Try native share (iOS/Android)
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({ files: [file] });
+                    return;
+                } catch (e) { /* user cancelled, fall through */ }
+            }
+
+            // Fallback: blob URL download
+            const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
-            link.download = `${thought.id || 'share'}.png`;
-            link.href = canvas.toDataURL('image/png');
+            link.download = file.name;
+            link.href = url;
             link.click();
+            setTimeout(() => URL.revokeObjectURL(url), 5000);
         });
 
         // Close
