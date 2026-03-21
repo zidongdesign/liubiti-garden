@@ -1,19 +1,19 @@
-// 刘鼻涕的思考花园 v2 — 瀑布流 + 月份导航
+// 刘鼻涕的思考花园 v3 — 底部 Tab Bar + 无限滚动
 
 class Garden {
     constructor() {
         this.thoughts = [];
-        this.months = [];   // [{label, key, ids}]
+        this.rendered = 0;
+        this.batchSize = 10;
+        this.loading = false;
         this.init();
     }
 
     async init() {
         await this.loadThoughts();
-        this.buildMonths();
-        this.renderNav();
-        this.renderStream();
+        this.renderBatch();
+        this.initInfiniteScroll();
         this.initObserver();
-        this.initNavScroll();
         this.initBackToTop();
         this.initShareCard();
         this.fadeIn();
@@ -33,7 +33,6 @@ class Garden {
     // ===== 日期工具 =====
 
     formatDate(t) {
-        // 统一输出 "Mar 7, 2026" 格式
         const raw = t.dateLabel || t.date || t.id || '';
         const d = this.parseDate(raw);
         if (!d) return raw;
@@ -42,7 +41,6 @@ class Garden {
     }
 
     parseDate(str) {
-        // Handle "2026-03-07", "2026年3月4日", "2026-03-07-2"
         let m;
         m = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
         if (m) return new Date(+m[1], +m[2]-1, +m[3]);
@@ -52,7 +50,6 @@ class Garden {
     }
 
     monthKey(t) {
-        // Try dateLabel first, fall back to date, then id
         const candidates = [t.dateLabel, t.date, t.id].filter(Boolean);
         for (const c of candidates) {
             const d = this.parseDate(c);
@@ -68,63 +65,51 @@ class Garden {
         return `${names[+m-1]} ${y}`;
     }
 
-    // ===== 按月分组 =====
+    // ===== 渲染一批卡片 =====
 
-    buildMonths() {
-        const map = new Map();
-        for (const t of this.thoughts) {
-            const k = this.monthKey(t);
-            if (!map.has(k)) map.set(k, []);
-            map.get(k).push(t.id);
-        }
-        this.months = [...map.entries()].map(([key, ids]) => ({
-            key,
-            label: this.monthLabel(key),
-            ids
-        }));
-    }
-
-    // ===== 渲染月份导航 =====
-
-    renderNav() {
-        const nav = document.querySelector('.month-nav');
-        if (!nav) return;
-        nav.innerHTML = this.months.map((m, i) => `
-            <button class="month-btn${i===0?' active':''}" data-month="${m.key}">${m.label}</button>
-        `).join('');
-
-        nav.querySelectorAll('.month-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const target = document.getElementById('month-' + btn.dataset.month);
-                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            });
-        });
-    }
-
-    // ===== 渲染瀑布流 =====
-
-    renderStream() {
+    renderBatch() {
         const container = document.querySelector('.card-stream');
         if (!container) return;
 
+        const end = Math.min(this.rendered + this.batchSize, this.thoughts.length);
         let html = '';
-        let currentMonth = null;
+        let lastMonth = null;
 
-        for (const t of this.thoughts) {
+        // Find last rendered month for continuity
+        if (this.rendered > 0) {
+            lastMonth = this.monthKey(this.thoughts[this.rendered - 1]);
+        }
+
+        for (let i = this.rendered; i < end; i++) {
+            const t = this.thoughts[i];
             const mk = this.monthKey(t);
-            if (mk !== currentMonth) {
-                currentMonth = mk;
+            if (mk !== lastMonth) {
+                lastMonth = mk;
                 html += `<div class="month-divider" id="month-${mk}">${this.monthLabel(mk)}</div>`;
             }
             html += this.createCardHTML(t);
         }
 
-        container.innerHTML = html;
+        // Remove old sentinel if exists
+        const oldSentinel = container.querySelector('.load-sentinel');
+        if (oldSentinel) oldSentinel.remove();
+
+        container.insertAdjacentHTML('beforeend', html);
+        this.rendered = end;
+
+        // Add sentinel for next batch
+        if (this.rendered < this.thoughts.length) {
+            const sentinel = document.createElement('div');
+            sentinel.className = 'load-sentinel';
+            container.appendChild(sentinel);
+        }
+
+        // Init observers for new cards
+        this.observeNewCards();
     }
 
     createCardHTML(t) {
         const date = this.formatDate(t);
-        // Derive title: use explicit title, or first sentence of text field, or id
         const title = t.title || (t.text ? t.text.split(/[。．.!！?？\n]/)[0].slice(0, 60) : t.id);
         const subtitle = t.subtitle ? `<p class="card-subtitle">${t.subtitle}</p>` : '';
         const imgSrc = t.image || t.coverImage;
@@ -133,7 +118,6 @@ class Garden {
             ? `<img src="${thumbSrc}" alt="${title}" class="card-cover" loading="lazy" onerror="this.onerror=null;this.src='${imgSrc}'">`
             : '';
 
-        // For compact-format entries (text field, no content array), render text as content
         let quote = t.quote
             ? `<div class="card-quote">"${t.quote}"</div>`
             : '';
@@ -147,7 +131,6 @@ class Garden {
                 return '';
             }).join('');
         } else if (t.body) {
-            // body field: split paragraphs on double newline
             bodyContent = t.body.split(/\n\n+/).map(p => 
                 `<p class="card-text">${p.replace(/\n/g,'<br>')}</p>`
             ).join('');
@@ -174,39 +157,54 @@ class Garden {
         `;
     }
 
-    // ===== Intersection Observer (lazy load + fade in + nav highlight) =====
+    // ===== 无限滚动 =====
+
+    initInfiniteScroll() {
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && !this.loading && this.rendered < this.thoughts.length) {
+                this.loading = true;
+                this.renderBatch();
+                this.loading = false;
+            }
+        }, { rootMargin: '400px' });
+
+        // Observe sentinel when it appears
+        const mo = new MutationObserver(() => {
+            const sentinel = document.querySelector('.load-sentinel');
+            if (sentinel) {
+                observer.disconnect();
+                observer.observe(sentinel);
+            }
+        });
+        mo.observe(document.querySelector('.card-stream'), { childList: true });
+
+        // Observe initial sentinel
+        const sentinel = document.querySelector('.load-sentinel');
+        if (sentinel) observer.observe(sentinel);
+    }
+
+    // ===== Intersection Observer (fade in cards + images) =====
 
     initObserver() {
-        // Lazy images
-        const imgObs = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (e.isIntersecting) {
-                    const img = e.target;
-                    if (img.dataset.src) {
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                    }
-                    imgObs.unobserve(img);
-                }
-            });
-        }, { rootMargin: '300px' });
-
-        document.querySelectorAll('img.lazy').forEach(img => imgObs.observe(img));
-
-        // Fade in cards
-        const cardObs = new IntersectionObserver((entries) => {
+        this.cardObs = new IntersectionObserver((entries) => {
             entries.forEach(e => {
                 if (e.isIntersecting) {
                     e.target.classList.add('visible');
-                    cardObs.unobserve(e.target);
+                    this.cardObs.unobserve(e.target);
                 }
             });
         }, { threshold: 0.1 });
+    }
 
-        document.querySelectorAll('.thought-card').forEach(card => cardObs.observe(card));
+    observeNewCards() {
+        document.querySelectorAll('.thought-card:not(.observed)').forEach(card => {
+            card.classList.add('observed');
+            this.cardObs.observe(card);
+        });
 
         // Fade in cover images on load
-        document.querySelectorAll('img.card-cover').forEach(img => {
+        document.querySelectorAll('img.card-cover:not(.listen)').forEach(img => {
+            img.classList.add('listen');
             if (img.complete) {
                 img.classList.add('loaded');
             } else {
@@ -214,28 +212,6 @@ class Garden {
                 img.addEventListener('error', () => img.classList.add('loaded'), { once: true });
             }
         });
-    }
-
-    // ===== Scroll-based nav highlight =====
-
-    initNavScroll() {
-        const dividers = document.querySelectorAll('.month-divider');
-        const btns = document.querySelectorAll('.month-btn');
-        if (!dividers.length || !btns.length) return;
-
-        const obs = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (e.isIntersecting) {
-                    const mk = e.target.id.replace('month-', '');
-                    btns.forEach(b => b.classList.toggle('active', b.dataset.month === mk));
-                    // scroll nav button into view
-                    const active = document.querySelector('.month-btn.active');
-                    if (active) active.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-                }
-            });
-        }, { rootMargin: '-10% 0px -80% 0px' });
-
-        dividers.forEach(d => obs.observe(d));
     }
 
     fadeIn() {
@@ -257,7 +233,7 @@ class Garden {
         });
     }
 
-    // ===== 长按分享 =====
+    // ===== 点击图片分享 =====
 
     initShareCard() {
         const getThought = (cardEl) => {
@@ -265,7 +241,6 @@ class Garden {
             return this.thoughts.find(t => t.id === id);
         };
 
-        // Click on card cover image → share overlay
         document.addEventListener('click', (e) => {
             if (!e.target.classList.contains('card-cover')) return;
             e.preventDefault();
@@ -278,7 +253,6 @@ class Garden {
     }
 
     async showShareOverlay(thought) {
-        // Create overlay
         const overlay = document.createElement('div');
         overlay.className = 'share-overlay';
         overlay.innerHTML = `
@@ -296,25 +270,21 @@ class Garden {
         const canvas = overlay.querySelector('.share-canvas');
         await this.renderShareImage(canvas, thought);
 
-        // Save/share button
         overlay.querySelector('.share-save').addEventListener('click', async () => {
             const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
             const file = new File([blob], `${thought.id || 'share'}.png`, { type: 'image/png' });
 
-            // Use native share on iOS/Android
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 try {
                     await navigator.share({ files: [file] });
                 } catch (e) { /* user cancelled */ }
             } else {
-                // Desktop fallback: open in new tab for right-click save
                 const url = URL.createObjectURL(blob);
                 window.open(url, '_blank');
                 setTimeout(() => URL.revokeObjectURL(url), 30000);
             }
         });
 
-        // Close
         const close = () => {
             overlay.classList.remove('visible');
             setTimeout(() => overlay.remove(), 300);
@@ -331,13 +301,10 @@ class Garden {
         const IMG_H = 1080;
         const ctx = canvas.getContext('2d');
 
-        // Colors matching garden theme
         const BG = '#fdfcfb';
-        const TEXT = '#3a3a3a';
         const TEXT_LIGHT = '#737373';
         const ACCENT = '#8b7355';
 
-        // Load image first to measure total height
         const imgSrc = thought.image;
         let img = null;
         if (imgSrc) {
@@ -346,23 +313,17 @@ class Garden {
                 i.crossOrigin = 'anonymous';
                 i.onload = () => resolve(i);
                 i.onerror = () => resolve(null);
-                // Use full image, not thumb
                 i.src = imgSrc;
             });
         }
 
-        // Measure text to determine canvas height
-        // We'll use a temp canvas for measurement
         canvas.width = W;
-        canvas.height = 2400; // temp
+        canvas.height = 2400;
         ctx.textBaseline = 'top';
 
-        // Title
         const titleFont = `500 42px "Noto Serif SC", "PingFang SC", serif`;
-        const bodyFont = `300 26px "Noto Serif SC", "PingFang SC", serif`;
         const sigFont = `300 20px "Crimson Pro", "PingFang SC", serif`;
 
-        // Title only, no body text
         const title = thought.title || '';
 
         ctx.font = titleFont;
@@ -373,18 +334,14 @@ class Garden {
         const sigTop = textTop + titleH + 32;
         const totalH = sigTop + 30 + 56;
 
-        // Set final canvas size
         canvas.width = W;
         canvas.height = totalH;
         ctx.textBaseline = 'top';
 
-        // Background
         ctx.fillStyle = BG;
         ctx.fillRect(0, 0, W, totalH);
 
-        // Image
         if (img) {
-            // Draw image covering 1080x1080
             const scale = Math.max(IMG_H / img.naturalHeight, W / img.naturalWidth);
             const sw = img.naturalWidth * scale;
             const sh = img.naturalHeight * scale;
@@ -393,19 +350,16 @@ class Garden {
             ctx.drawImage(img, sx, sy, sw, sh);
         }
 
-        // Title
         ctx.fillStyle = ACCENT;
         ctx.font = titleFont;
         titleLines.forEach((line, i) => {
             ctx.fillText(line, PAD, textTop + i * 56);
         });
 
-        // Signature (no body text)
         ctx.fillStyle = TEXT_LIGHT;
         ctx.font = sigFont;
         ctx.fillText('🐱 刘鼻涕 · liubiti.garden', PAD, sigTop);
 
-        // Subtle top line on text area
         if (img) {
             ctx.strokeStyle = '#e8e4df';
             ctx.lineWidth = 1;
@@ -418,7 +372,6 @@ class Garden {
 
     wrapText(ctx, text, maxWidth) {
         const lines = [];
-        // Split on explicit newlines first
         const paragraphs = text.split('\n');
         for (const para of paragraphs) {
             if (!para.trim()) { lines.push(''); continue; }
