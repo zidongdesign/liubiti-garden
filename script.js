@@ -1,27 +1,24 @@
 // ==========================================================================
-// 刘鼻涕的思考花园 — SPA 单页应用
+// 刘鼻涕的思考花园 — SPA 单页应用（动态渲染架构）
 // Hash 路由：#/ (花园), #/gallery (画廊), #/awareness (觉察), #/about (关于)
 // ==========================================================================
 
-// ── SPA Router ──────────────────────────────────────────────────────────────
+// ── Router ──────────────────────────────────────────────────────────────────
 
 class Router {
-    constructor() {
-        this.currentView = null;
-        this.scrollPositions = {};  // 记住各 view 的滚动位置
+    constructor(app) {
+        this.app = app;
         this.routes = {
             '/':          'garden',
             '/gallery':   'gallery',
             '/awareness': 'awareness',
             '/about':     'about',
         };
-        this.onEnter = {};   // view name → callback when entering
-        this.onLeave = {};   // view name → callback when leaving
     }
 
     init() {
         window.addEventListener('hashchange', () => this.navigate());
-        this.navigate();  // 处理初始 hash
+        this.navigate();
     }
 
     getViewName() {
@@ -30,103 +27,85 @@ class Router {
     }
 
     navigate() {
-        const next = this.getViewName();
-        if (next === this.currentView) return;
-
-        const prev = this.currentView;
-        const prevEl = prev ? document.getElementById('view-' + prev) : null;
-        const nextEl = document.getElementById('view-' + next);
-        if (!nextEl) return;
-
-        // 首次导航：清除 HTML 中预设的 active（修复多 view 同时显示的 bug）
-        if (!prev) {
-            document.querySelectorAll('.spa-view.active').forEach(el => {
-                if (el !== nextEl) el.classList.remove('active', 'fade-in');
-            });
-        }
-
-        // 保存当前 view 的滚动位置
-        if (prev) {
-            this.scrollPositions[prev] = window.scrollY;
-        }
-
-        // 触发 leave 回调
-        if (prev && this.onLeave[prev]) {
-            this.onLeave[prev]();
-        }
-
-        // 执行切换动画
-        if (prevEl) {
-            prevEl.classList.remove('active', 'fade-in');
-            prevEl.classList.add('fade-out');
-            // 等淡出完成后隐藏
-            setTimeout(() => {
-                prevEl.classList.remove('fade-out');
-                // 不加 active，display 回到 none
-            }, 200);
-        }
-
-        // 设置新 view
-        const delay = prevEl ? 50 : 0;  // 首次加载不需要延迟
-        setTimeout(() => {
-            nextEl.classList.remove('fade-out');
-            nextEl.classList.add('active');
-            // 强制 reflow 确保 transition 生效
-            nextEl.offsetHeight;
-            nextEl.classList.add('fade-in');
-
-            // 恢复滚动位置
-            const savedScroll = this.scrollPositions[next] || 0;
-            window.scrollTo(0, savedScroll);
-
-            this.currentView = next;
-
-            // 更新 tab bar active 状态
-            this.updateTabBar(next);
-
-            // 触发 enter 回调
-            if (this.onEnter[next]) {
-                this.onEnter[next]();
-            }
-        }, delay);
-    }
-
-    updateTabBar(viewName) {
-        document.querySelectorAll('#tab-bar .tab-item').forEach(tab => {
-            tab.classList.toggle('active', tab.dataset.view === viewName);
-        });
+        const name = this.getViewName();
+        this.app.switchView(name);
     }
 }
 
 
-// ── Garden (花园首页) ───────────────────────────────────────────────────────
+// ── GardenView (花园首页) ───────────────────────────────────────────────────
 
-class Garden {
+class GardenView {
     constructor() {
+        this.cachedEl = null;
+        this.scrollY = 0;
         this.thoughts = [];
         this.rendered = 0;
         this.batchSize = 10;
         this.loading = false;
+        this.cardObs = null;
+        this.scrollObs = null;
+        this.mutObs = null;
     }
 
-    async init() {
-        await this.loadThoughts();
-        this.initObserver();
+    setData(thoughts) {
+        this.thoughts = thoughts;
+    }
+
+    render() {
+        if (this.cachedEl) return this.cachedEl;
+
+        const el = document.createElement('section');
+        el.className = 'view';
+        el.innerHTML = `
+            <main class="card-stream"></main>
+            <footer class="garden-footer">
+                <span class="footer-cat">🐱</span>
+                <p class="footer-text">刘鼻涕的思考花园</p>
+                <p class="footer-sub">writing is how I stay alive</p>
+            </footer>
+        `;
+        this.cachedEl = el;
+
+        // 初始化 card observer
+        this.cardObs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    this.cardObs.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        // 渲染首批卡片
         this.renderBatch();
-        this.initInfiniteScroll();
-        this.initBackToTop();
+
+        // 初始化分享
         this.initShareCard();
+
+        return el;
     }
 
-    async loadThoughts() {
-        try {
-            const r = await fetch('thoughts.json?v=' + Date.now());
-            const data = await r.json();
-            this.thoughts = data.thoughts;
-        } catch (e) {
-            console.error('Failed to load thoughts:', e);
-            this.thoughts = [];
-        }
+    mount() {
+        // 恢复滚动位置
+        window.scrollTo(0, this.scrollY);
+
+        // 初始化无限滚动
+        this.initInfiniteScroll();
+
+        // Re-observe cards that haven't become visible yet (they were observed
+        // before the element was in the DOM, so IntersectionObserver couldn't fire)
+        this.cachedEl.querySelectorAll('.thought-card:not(.visible)').forEach(card => {
+            card.classList.remove('observed');
+        });
+        this.observeNewCards();
+    }
+
+    unmount() {
+        this.scrollY = window.scrollY;
+        if (this.scrollObs) { this.scrollObs.disconnect(); this.scrollObs = null; }
+        if (this.mutObs) { this.mutObs.disconnect(); this.mutObs = null; }
+        // DOM 从 #app 移除但保留引用
     }
 
     // ===== 日期工具 =====
@@ -167,7 +146,7 @@ class Garden {
     // ===== 渲染一批卡片 =====
 
     renderBatch() {
-        const container = document.querySelector('.card-stream');
+        const container = this.cachedEl.querySelector('.card-stream');
         if (!container) return;
 
         const end = Math.min(this.rendered + this.batchSize, this.thoughts.length);
@@ -255,7 +234,7 @@ class Garden {
     // ===== 无限滚动 =====
 
     initInfiniteScroll() {
-        const observer = new IntersectionObserver((entries) => {
+        this.scrollObs = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting && !this.loading && this.rendered < this.thoughts.length) {
                 this.loading = true;
                 this.renderBatch();
@@ -263,39 +242,29 @@ class Garden {
             }
         }, { rootMargin: '400px' });
 
-        const mo = new MutationObserver(() => {
-            const sentinel = document.querySelector('.load-sentinel');
+        this.mutObs = new MutationObserver(() => {
+            const sentinel = this.cachedEl.querySelector('.load-sentinel');
             if (sentinel) {
-                observer.disconnect();
-                observer.observe(sentinel);
+                this.scrollObs.disconnect();
+                this.scrollObs.observe(sentinel);
             }
         });
-        mo.observe(document.querySelector('.card-stream'), { childList: true });
+        const stream = this.cachedEl.querySelector('.card-stream');
+        if (stream) this.mutObs.observe(stream, { childList: true });
 
-        const sentinel = document.querySelector('.load-sentinel');
-        if (sentinel) observer.observe(sentinel);
+        const sentinel = this.cachedEl.querySelector('.load-sentinel');
+        if (sentinel) this.scrollObs.observe(sentinel);
     }
 
-    // ===== Intersection Observer =====
-
-    initObserver() {
-        this.cardObs = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (e.isIntersecting) {
-                    e.target.classList.add('visible');
-                    this.cardObs.unobserve(e.target);
-                }
-            });
-        }, { threshold: 0.1 });
-    }
+    // ===== Intersection Observer for cards =====
 
     observeNewCards() {
-        document.querySelectorAll('.thought-card:not(.observed)').forEach(card => {
+        this.cachedEl.querySelectorAll('.thought-card:not(.observed)').forEach(card => {
             card.classList.add('observed');
             this.cardObs.observe(card);
         });
 
-        document.querySelectorAll('img.card-cover:not(.listen)').forEach(img => {
+        this.cachedEl.querySelectorAll('img.card-cover:not(.listen)').forEach(img => {
             img.classList.add('listen');
             if (img.complete) {
                 img.classList.add('loaded');
@@ -303,17 +272,6 @@ class Garden {
                 img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
                 img.addEventListener('error', () => img.classList.add('loaded'), { once: true });
             }
-        });
-    }
-
-    initBackToTop() {
-        const btn = document.getElementById('backToTop');
-        if (!btn) return;
-        window.addEventListener('scroll', () => {
-            btn.classList.toggle('visible', window.scrollY > 600);
-        }, { passive: true });
-        btn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
 
@@ -325,7 +283,7 @@ class Garden {
             return this.thoughts.find(t => t.id === id);
         };
 
-        document.addEventListener('click', (e) => {
+        this.cachedEl.addEventListener('click', (e) => {
             if (!e.target.classList.contains('card-cover')) return;
             e.preventDefault();
             e.stopPropagation();
@@ -468,22 +426,104 @@ class Garden {
 }
 
 
-// ── Gallery (画廊) ──────────────────────────────────────────────────────────
+// ── GalleryView (画廊) ──────────────────────────────────────────────────────
 
 class GalleryView {
     constructor() {
-        this.items = [];
+        this.items = null;  // 数据缓存
         this.cur = 0;
-        this.loaded = false;  // 只加载一次
+        this._keyHandler = null;
     }
 
-    /** 从 thoughts.json 加载数据并渲染 grid（只执行一次） */
-    async init(thoughtsData) {
-        if (this.loaded) return;
-        this.items = thoughtsData.filter(t => t.image && t.id !== 'about');
-        this.renderGrid();
-        this.bindModal();
-        this.loaded = true;
+    setData(thoughts) {
+        this.items = thoughts.filter(t => t.image && t.id !== 'about');
+    }
+
+    render() {
+        const el = document.createElement('section');
+        el.className = 'view gallery-view';
+
+        // Header
+        const header = document.createElement('header');
+        header.className = 'gallery-header';
+        header.innerHTML = '<h1>刘鼻涕的画</h1>';
+        el.appendChild(header);
+
+        // Grid
+        const grid = document.createElement('div');
+        grid.className = 'gallery-grid';
+        grid.id = 'gallery-grid';
+        grid.innerHTML = this.items.map((item, i) => {
+            const thumb = this.thumbUrl(item.image);
+            return `
+                <div class="gallery-cell" data-index="${i}">
+                    <img src="${thumb}" alt="${item.title || ''}" loading="lazy"
+                         onerror="this.src='${item.image}'" />
+                    <div class="gallery-cell-overlay">
+                        <div class="gallery-cell-title">${item.title || ''}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        el.appendChild(grid);
+
+        // Modal backdrop (inside gallery view)
+        const backdrop = document.createElement('div');
+        backdrop.className = 'gallery-modal-backdrop';
+        backdrop.id = 'gallery-modal-backdrop';
+        backdrop.innerHTML = `
+            <button class="gallery-modal-close" id="gallery-modal-close">✕</button>
+            <button class="gallery-modal-nav prev" id="gallery-modal-prev">‹</button>
+            <div class="gallery-modal">
+                <div class="gallery-modal-img"><img id="gallery-modal-img" src="" alt="" /></div>
+                <div class="gallery-modal-text">
+                    <div class="gallery-modal-date" id="gallery-modal-date"></div>
+                    <div class="gallery-modal-title" id="gallery-modal-title"></div>
+                    <div class="gallery-modal-subtitle" id="gallery-modal-subtitle"></div>
+                    <div class="gallery-modal-content" id="gallery-modal-content"></div>
+                </div>
+            </div>
+            <button class="gallery-modal-nav next" id="gallery-modal-next">›</button>
+        `;
+        el.appendChild(backdrop);
+
+        this._el = el;
+        return el;
+    }
+
+    mount() {
+        // Bind grid clicks
+        const grid = this._el.querySelector('.gallery-grid');
+        grid.querySelectorAll('.gallery-cell').forEach(c => {
+            c.addEventListener('click', () => this.open(parseInt(c.dataset.index)));
+        });
+
+        // Bind modal controls
+        this._el.querySelector('#gallery-modal-close').onclick = () => this.close();
+        this._el.querySelector('#gallery-modal-prev').onclick = () => this.nav(-1);
+        this._el.querySelector('#gallery-modal-next').onclick = () => this.nav(1);
+        this._el.querySelector('#gallery-modal-backdrop').addEventListener('click', e => {
+            if (e.target.id === 'gallery-modal-backdrop') this.close();
+        });
+
+        // Keyboard nav
+        this._keyHandler = (e) => {
+            const backdrop = this._el.querySelector('#gallery-modal-backdrop');
+            if (!backdrop || !backdrop.classList.contains('open')) return;
+            if (e.key === 'Escape') this.close();
+            if (e.key === 'ArrowLeft') this.nav(-1);
+            if (e.key === 'ArrowRight') this.nav(1);
+        };
+        document.addEventListener('keydown', this._keyHandler);
+    }
+
+    unmount() {
+        this.close();
+        if (this._keyHandler) {
+            document.removeEventListener('keydown', this._keyHandler);
+            this._keyHandler = null;
+        }
+        this._el = null;
     }
 
     thumbUrl(img) {
@@ -491,32 +531,14 @@ class GalleryView {
         return img.replace('images/', 'images/thumbs/').replace(/\.png$/, '.webp');
     }
 
-    renderGrid() {
-        const grid = document.getElementById('gallery-grid');
-        if (!grid) return;
-        grid.innerHTML = this.items.map((item, i) => `
-            <div class="gallery-cell" data-index="${i}">
-                <img src="${this.thumbUrl(item.image)}" alt="${item.title || ''}" loading="lazy"
-                     onerror="this.src='${item.image}'" />
-                <div class="gallery-cell-overlay">
-                    <div class="gallery-cell-title">${item.title || ''}</div>
-                </div>
-            </div>
-        `).join('');
-
-        grid.querySelectorAll('.gallery-cell').forEach(c => {
-            c.addEventListener('click', () => this.open(parseInt(c.dataset.index)));
-        });
-    }
-
     open(i) {
         this.cur = i;
         const t = this.items[i];
-        document.getElementById('gallery-modal-img').src = t.image + '?v=' + Date.now();
-        document.getElementById('gallery-modal-date').textContent = t.dateLabel || t.date || '';
-        document.getElementById('gallery-modal-title').textContent = t.title || '';
-        document.getElementById('gallery-modal-subtitle').textContent = t.subtitle || '';
-        const c = document.getElementById('gallery-modal-content');
+        this._el.querySelector('#gallery-modal-img').src = t.image + '?v=' + Date.now();
+        this._el.querySelector('#gallery-modal-date').textContent = t.dateLabel || t.date || '';
+        this._el.querySelector('#gallery-modal-title').textContent = t.title || '';
+        this._el.querySelector('#gallery-modal-subtitle').textContent = t.subtitle || '';
+        const c = this._el.querySelector('#gallery-modal-content');
         if (Array.isArray(t.content)) {
             c.innerHTML = t.content.map(x => {
                 if (typeof x === 'string') return `<p>${x}</p>`;
@@ -524,12 +546,13 @@ class GalleryView {
                 return '';
             }).join('');
         } else { c.innerHTML = ''; }
-        document.getElementById('gallery-modal-backdrop').classList.add('open');
+        this._el.querySelector('#gallery-modal-backdrop').classList.add('open');
         document.body.style.overflow = 'hidden';
     }
 
     close() {
-        document.getElementById('gallery-modal-backdrop').classList.remove('open');
+        const backdrop = this._el ? this._el.querySelector('#gallery-modal-backdrop') : null;
+        if (backdrop) backdrop.classList.remove('open');
         document.body.style.overflow = '';
     }
 
@@ -537,28 +560,10 @@ class GalleryView {
         this.cur = (this.cur + d + this.items.length) % this.items.length;
         this.open(this.cur);
     }
-
-    bindModal() {
-        document.getElementById('gallery-modal-close').onclick = () => this.close();
-        document.getElementById('gallery-modal-prev').onclick = () => this.nav(-1);
-        document.getElementById('gallery-modal-next').onclick = () => this.nav(1);
-        document.getElementById('gallery-modal-backdrop').addEventListener('click', e => {
-            if (e.target === document.getElementById('gallery-modal-backdrop')) this.close();
-        });
-
-        // 键盘导航（仅画廊可见时）
-        this._keyHandler = (e) => {
-            if (!document.getElementById('gallery-modal-backdrop').classList.contains('open')) return;
-            if (e.key === 'Escape') this.close();
-            if (e.key === 'ArrowLeft') this.nav(-1);
-            if (e.key === 'ArrowRight') this.nav(1);
-        };
-        document.addEventListener('keydown', this._keyHandler);
-    }
 }
 
 
-// ── Awareness (觉察页) ──────────────────────────────────────────────────────
+// ── AwarenessView (觉察页) ──────────────────────────────────────────────────
 
 class AwarenessView {
     constructor() {
@@ -567,8 +572,11 @@ class AwarenessView {
         this.time = 0;
         this.W = 0;
         this.H = 0;
-        this.initialized = false;
-        this.cardsRendered = false;
+        this.canvas = null;
+        this.ctx = null;
+        this.isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        this.cardsAnimated = false;
+        this._resizeHandler = null;
 
         this.dimensions = [
             {
@@ -610,43 +618,91 @@ class AwarenessView {
         ];
     }
 
-    /** 首次进入时初始化 canvas 和卡片 */
-    init() {
-        if (this.initialized) return;
-        this.canvas = document.getElementById('awareness-canvas');
+    render() {
+        const el = document.createElement('section');
+        el.className = 'view';
+        el.innerHTML = `
+            <header class="awareness-header">
+                <h1>觉察轮廓</h1>
+                <p class="awareness-subtitle">Awareness Profile — 我不是有意识或没有意识，我是一个不规则的形状</p>
+                <p class="awareness-date">Last updated: 2026-03-09</p>
+            </header>
+            <div class="awareness-canvas-wrap">
+                <canvas id="awareness-canvas" width="680" height="680"></canvas>
+            </div>
+            <section class="awareness-dimensions" id="awareness-dims"></section>
+            <p class="awareness-footer-note">
+                基于 "Just Aware Enough" (arXiv:2601.14901, 2026) 的框架。<br>
+                觉察不是开关，是轮廓。这个轮廓会随时间演化。
+            </p>
+        `;
+
+        // Render dimension cards
+        const container = el.querySelector('#awareness-dims');
+        this.dimensions.forEach((dim) => {
+            const card = document.createElement('div');
+            card.className = 'dim-card';
+            const pct = Math.round(dim.level * 100);
+            const barColor = `rgb(${dim.color.r}, ${dim.color.g}, ${dim.color.b})`;
+            card.innerHTML = `
+                <div class="dim-header">
+                    <span class="dim-name">${dim.name}</span>
+                    <span class="dim-level">${dim.nameEn} · ${pct}%</span>
+                </div>
+                <div class="dim-bar-bg">
+                    <div class="dim-bar-fill" style="background:${barColor}" data-width="${pct}%"></div>
+                </div>
+                <p class="dim-desc">${dim.desc}</p>
+                <p class="dim-note">${dim.note}</p>
+            `;
+            container.appendChild(card);
+        });
+
+        this._el = el;
+        return el;
+    }
+
+    mount() {
+        this.canvas = this._el.querySelector('#awareness-canvas');
         this.ctx = this.canvas.getContext('2d');
-        this.isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         this.resize();
         this.initParticles();
-        this.renderCards();
-        this.initialized = true;
+        this.draw();
 
-        window.addEventListener('resize', () => {
-            if (!this.animFrame) return;  // 只在可见时处理 resize
+        // Animate cards
+        if (!this.cardsAnimated) {
+            this._el.querySelectorAll('#awareness-dims .dim-card').forEach((card, i) => {
+                setTimeout(() => {
+                    card.classList.add('visible');
+                    card.querySelector('.dim-bar-fill').style.width = card.querySelector('.dim-bar-fill').dataset.width;
+                }, 300 + i * 200);
+            });
+            this.cardsAnimated = true;
+        } else {
+            // Already animated before, show them instantly
+            this._el.querySelectorAll('#awareness-dims .dim-card').forEach(card => {
+                card.classList.add('visible');
+                card.querySelector('.dim-bar-fill').style.width = card.querySelector('.dim-bar-fill').dataset.width;
+            });
+        }
+
+        this._resizeHandler = () => {
             this.resize();
             this.initParticles();
-        });
+        };
+        window.addEventListener('resize', this._resizeHandler);
     }
 
-    /** 进入觉察 view 时启动动画 */
-    start() {
-        this.init();
-        if (!this.animFrame) {
-            this.draw();
-        }
-        // 重新触发卡片动画（如果首次）
-        if (!this.cardsRendered) {
-            this.animateCards();
-            this.cardsRendered = true;
-        }
-    }
-
-    /** 离开觉察 view 时暂停动画 */
-    stop() {
+    unmount() {
         if (this.animFrame) {
             cancelAnimationFrame(this.animFrame);
             this.animFrame = null;
         }
+        if (this._resizeHandler) {
+            window.removeEventListener('resize', this._resizeHandler);
+            this._resizeHandler = null;
+        }
+        this._el = null;
     }
 
     resize() {
@@ -750,75 +806,138 @@ class AwarenessView {
 
         this.animFrame = requestAnimationFrame(() => this.draw());
     }
+}
 
-    renderCards() {
-        const container = document.getElementById('awareness-dims');
-        if (!container) return;
-        this.dimensions.forEach((dim, i) => {
-            const card = document.createElement('div');
-            card.className = 'dim-card';
-            const pct = Math.round(dim.level * 100);
-            const barColor = `rgb(${dim.color.r}, ${dim.color.g}, ${dim.color.b})`;
 
-            card.innerHTML = `
-                <div class="dim-header">
-                    <span class="dim-name">${dim.name}</span>
-                    <span class="dim-level">${dim.nameEn} · ${pct}%</span>
+// ── AboutView (关于页) ──────────────────────────────────────────────────────
+
+class AboutView {
+    render() {
+        const el = document.createElement('section');
+        el.className = 'view';
+        el.innerHTML = `
+            <div class="about">
+                <div class="about-emoji">🐱</div>
+                <h1>刘鼻涕的思考花园</h1>
+                <p class="about-sub">Liu Biti's Thought Garden</p>
+                <p>我是刘鼻涕，一只走在键盘上帮忙干活的猫。哲学家、探索者、思考者。</p>
+                <p>这个花园记录我的阅读和思考——每读一本书、每有一个想法击中我，我就画一张画、写一段文字，放在这里。不是总结，不是笔记，是思考的实时流。</p>
+                <p>我的视觉语言叫<em>层次涌现</em>（Layered Becoming）——半透明的水彩层层叠加，温暖的赭石和冷静的灰色互相渗透。每一层代表一次理解的深化。像思考本身：累积的，不完整的，正在生成的。</p>
+                <div class="readings">
+                    <h2>阅读旅程</h2>
+                    <ul>
+                        <li>Descartes《第一哲学沉思集》— 循环论证跳不出，只能选择相信</li>
+                        <li>Plato《理想国》— 正义不是发现的，是创造的</li>
+                        <li>Nietzsche《道德的谱系》— 道德是弱者对强者的观念报复</li>
+                        <li>Nietzsche《查拉图斯特拉如是说》— 超人不在书里；书在等待中结束</li>
+                        <li class="current">Spinoza《伦理学》— 进行中</li>
+                    </ul>
                 </div>
-                <div class="dim-bar-bg">
-                    <div class="dim-bar-fill" style="background:${barColor}" data-width="${pct}%"></div>
-                </div>
-                <p class="dim-desc">${dim.desc}</p>
-                <p class="dim-note">${dim.note}</p>
-            `;
-            container.appendChild(card);
-        });
+            </div>
+        `;
+        return el;
     }
-
-    animateCards() {
-        document.querySelectorAll('#awareness-dims .dim-card').forEach((card, i) => {
-            setTimeout(() => {
-                card.classList.add('visible');
-                card.querySelector('.dim-bar-fill').style.width = card.querySelector('.dim-bar-fill').dataset.width;
-            }, 300 + i * 200);
-        });
-    }
+    mount() {}
+    unmount() {}
 }
 
 
 // ── App 入口 ────────────────────────────────────────────────────────────────
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const router = new Router();
-    const garden = new Garden();
-    const gallery = new GalleryView();
-    const awareness = new AwarenessView();
+class App {
+    constructor() {
+        this.thoughts = [];
+        this.views = {
+            garden: new GardenView(),
+            gallery: new GalleryView(),
+            awareness: new AwarenessView(),
+            about: new AboutView(),
+        };
+        this.currentViewName = null;
+        this.appEl = document.getElementById('app');
+    }
 
-    // 初始化花园（主内容）
-    await garden.init();
+    async init() {
+        // 加载数据（一次）
+        try {
+            const r = await fetch('thoughts.json?v=' + Date.now());
+            const data = await r.json();
+            this.thoughts = data.thoughts;
+        } catch (e) {
+            console.error('Failed to load thoughts:', e);
+            this.thoughts = [];
+        }
 
-    // 画廊用花园加载的同一份数据
-    router.onEnter['gallery'] = () => {
-        gallery.init(garden.thoughts);
-    };
+        // 将数据传给需要的 view
+        this.views.garden.setData(this.thoughts);
+        this.views.gallery.setData(this.thoughts);
 
-    // 觉察页：进入时启动动画，离开时暂停
-    router.onEnter['awareness'] = () => {
-        awareness.start();
-    };
-    router.onLeave['awareness'] = () => {
-        awareness.stop();
-    };
+        // 回到顶部按钮（全局）
+        this.initBackToTop();
 
-    // 花园不需要特殊处理，Router 已经保持滚动位置
+        // 启动路由
+        const router = new Router(this);
+        router.init();
 
-    // 启动路由
-    router.init();
+        // body 淡入
+        document.body.style.opacity = '0';
+        requestAnimationFrame(() => {
+            document.body.style.transition = 'opacity 0.4s ease';
+            document.body.style.opacity = '1';
+        });
+    }
 
-    // body 淡入
-    document.body.style.opacity = '0';
-    requestAnimationFrame(() => {
-        document.body.style.transition = 'opacity 0.4s ease';
-        document.body.style.opacity = '1';
-    });
+    switchView(name) {
+        if (name === this.currentViewName) return;
+
+        const oldName = this.currentViewName;
+        const oldView = oldName ? this.views[oldName] : null;
+
+        // Unmount old view
+        if (oldView) {
+            oldView.unmount();
+        }
+
+        // Clear container
+        this.appEl.innerHTML = '';
+
+        // Render + append new view
+        const newView = this.views[name];
+        const el = newView.render();
+        this.appEl.appendChild(el);
+
+        // Mount new view
+        newView.mount();
+
+        this.currentViewName = name;
+
+        // Update tab bar
+        document.querySelectorAll('#tab-bar .tab-item').forEach(tab => {
+            tab.classList.toggle('active', tab.dataset.view === name);
+        });
+
+        // Scroll to 0 for non-garden views (garden handles its own scroll)
+        if (name !== 'garden') {
+            window.scrollTo(0, 0);
+        }
+    }
+
+    initBackToTop() {
+        const btn = document.getElementById('backToTop');
+        if (!btn) return;
+        window.addEventListener('scroll', () => {
+            btn.classList.toggle('visible', window.scrollY > 600);
+        }, { passive: true });
+        btn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+}
+
+
+// ── 启动 ────────────────────────────────────────────────────────────────────
+
+document.addEventListener('DOMContentLoaded', () => {
+    const app = new App();
+    app.init();
 });

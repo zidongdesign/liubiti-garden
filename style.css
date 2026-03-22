@@ -40,30 +40,16 @@ body {
 }
 
 /* ==========================================================================
-   SPA View 切换 — 淡入淡出
+   SPA View 切换 — 动态渲染淡入
    ========================================================================== */
 
-.spa-view {
-    display: none;
-    opacity: 0;
-    transition: opacity var(--view-transition) ease;
+#app > .view {
+    animation: viewFadeIn 200ms ease forwards;
 }
 
-.spa-view.active {
-    display: block;
-    opacity: 1;
-}
-
-/* 淡出状态：显示但透明 */
-.spa-view.fade-out {
-    display: block;
-    opacity: 0;
-}
-
-/* 淡入状态：显示并渐显 */
-.spa-view.fade-in {
-    display: block;
-    opacity: 1;
+@keyframes viewFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 
@@ -487,7 +473,7 @@ body {
 .gallery-modal-nav.next { right: 8px; }
 
 /* 画廊 view 背景（深色） */
-#view-gallery {
+.gallery-view {
     background: #0a0a0a;
     color: #e8e4dc;
     min-height: 100vh;
@@ -726,7 +712,7 @@ canvas#awareness-canvas {
     }
 
     /* 画廊在 dark mode 下保持深色 */
-    #view-gallery {
+    .gallery-view {
         background: #0a0a0a;
     }
 
