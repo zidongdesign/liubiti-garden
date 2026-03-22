@@ -225,8 +225,8 @@ body {
 .back-to-top {
     position: fixed;
     bottom: 76px;
-    right: 50%;
-    transform: translateX(120px);
+    left: 50%;
+    transform: translateX(-50%);
     width: 36px;
     height: 36px;
     border-radius: 18px;
