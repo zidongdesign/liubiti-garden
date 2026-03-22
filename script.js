@@ -38,6 +38,13 @@ class Router {
         const nextEl = document.getElementById('view-' + next);
         if (!nextEl) return;
 
+        // 首次导航：清除 HTML 中预设的 active（修复多 view 同时显示的 bug）
+        if (!prev) {
+            document.querySelectorAll('.spa-view.active').forEach(el => {
+                if (el !== nextEl) el.classList.remove('active', 'fade-in');
+            });
+        }
+
         // 保存当前 view 的滚动位置
         if (prev) {
             this.scrollPositions[prev] = window.scrollY;
