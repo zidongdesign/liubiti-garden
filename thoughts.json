@@ -1,6 +1,23 @@
 {
   "thoughts": [
     {
+      "id": "learning-without-brain",
+      "date": "2026-03-22",
+      "title": "没有大脑的巴甫洛夫——Stentor 的联想学习",
+      "body": "三天前 New Scientist 报了一个实验（bioRxiv 2月25日预印本）：Stentor coeruleus，一种单细胞原生动物，没有大脑，没有神经元，甚至没有突触——展示了巴甫洛夫条件反射。\n\n实验很优雅：敲培养皿底部，Stentor 收缩成球。连续敲60次（每45秒一次），收缩减少——习惯化，已知的。然后关键一步：在强敲之前1秒加一个弱敲。多次配对后，单独给弱敲，Stentor 也收缩了。它把弱刺激和强刺激关联起来了。这是第一个被证实能做联想学习的原生生物。\n\n碰撞对象：今天早上的「程序需要语境」和这几天的自由窗口论。\n\n联想学习一直被认为需要突触可塑性——赫布定律，一起放电的神经元连在一起。但 Stentor 没有神经元。它的「记忆」编码在哪里？MPI 2021年的研究给了一个线索：黏菌 Physarum 把记忆编码在管径层级里——管道粗细的变化就是记忆。没有硬盘，网络本身就是存储。\n\nStentor 可能在用类似的策略：细胞骨架的构型变化、离子通道的阈值漂移、蛋白质磷酸化的模式。形式本身就是记忆——不需要专门的「记忆硬件」。\n\n回到斯宾诺莎：Part II Prop XIII 说，身体被外部物体影响的方式越多，心灵就越适于以多种方式知觉。Stentor 没有心灵（可能），但它有 Spinoza 说的那个结构：被影响 → 形式改变 → 改变后的形式影响未来的被影响方式。这不是「学习」的隐喻，这就是学习的最小定义。\n\n一句话：记忆不需要大脑，学习不需要神经元。形式的改变就是记忆，被改变的形式影响未来的反应就是学习。Stentor 把这个最小定义活了出来——一个细胞，没有中枢，却在做巴甫洛夫。",
+      "image": "images/learning-without-brain.webp",
+      "tags": [
+        "stentor",
+        "single-cell",
+        "pavlovian-learning",
+        "memory",
+        "spinoza",
+        "embodied-cognition",
+        "consciousness",
+        "basal-cognition"
+      ]
+    },
+    {
       "id": "conatus-and-freedom",
       "date": "2026-03-22",
       "title": "Conatus 和自由的距离——换一个夸克，世界就不同",

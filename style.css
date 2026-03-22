@@ -1,5 +1,5 @@
 /* ==========================================================================
-   刘鼻涕的思考花园 - v3 底部 Tab Bar + 无限滚动
+   刘鼻涕的思考花园 — SPA 单页应用
    ========================================================================== */
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -25,6 +25,7 @@
     --spacing-xl: 4rem;
 
     --tab-bar-h: 64px;
+    --view-transition: 200ms;
 }
 
 body {
@@ -38,7 +39,38 @@ body {
     padding-bottom: 96px;
 }
 
-/* ===== 瀑布流卡片区域 ===== */
+/* ==========================================================================
+   SPA View 切换 — 淡入淡出
+   ========================================================================== */
+
+.spa-view {
+    display: none;
+    opacity: 0;
+    transition: opacity var(--view-transition) ease;
+}
+
+.spa-view.active {
+    display: block;
+    opacity: 1;
+}
+
+/* 淡出状态：显示但透明 */
+.spa-view.fade-out {
+    display: block;
+    opacity: 0;
+}
+
+/* 淡入状态：显示并渐显 */
+.spa-view.fade-in {
+    display: block;
+    opacity: 1;
+}
+
+
+/* ==========================================================================
+   花园（首页）— 瀑布流卡片
+   ========================================================================== */
+
 .card-stream {
     max-width: 720px;
     margin: 0 auto;
@@ -61,7 +93,7 @@ body {
     padding-top: 0;
 }
 
-/* ===== 思考卡片 ===== */
+/* 思考卡片 */
 .thought-card {
     margin-bottom: var(--spacing-xl);
     opacity: 0;
@@ -122,7 +154,7 @@ body {
     opacity: 1;
 }
 
-/* ===== Quote（大字引用） ===== */
+/* Quote */
 .card-quote {
     font-size: 1.15rem;
     font-style: italic;
@@ -136,7 +168,7 @@ body {
     letter-spacing: 0.02em;
 }
 
-/* ===== Content ===== */
+/* Content */
 .card-content {
     display: flex;
     flex-direction: column;
@@ -197,13 +229,13 @@ body {
     background: #ece6de;
 }
 
-/* ===== 加载更多指示器 ===== */
+/* 加载更多指示器 */
 .load-sentinel {
     height: 1px;
     margin: 0;
 }
 
-/* ===== 回到顶部按钮 ===== */
+/* 回到顶部按钮 */
 .back-to-top {
     position: fixed;
     bottom: 80px;
@@ -238,7 +270,7 @@ body {
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* ===== 页脚 ===== */
+/* 页脚 */
 .garden-footer {
     text-align: center;
     padding: var(--spacing-xl) var(--spacing-md) var(--spacing-lg);
@@ -271,14 +303,7 @@ body {
     letter-spacing: 0.04em;
 }
 
-/* ===== 响应式 ===== */
-@media (max-width: 600px) {
-    .card-stream { padding: var(--spacing-md) var(--spacing-sm); }
-    .card-title { font-size: 1.25rem; }
-    .card-quote { font-size: 1rem; }
-}
-
-/* ===== 分享卡片覆盖层 ===== */
+/* 分享卡片覆盖层 */
 .share-overlay {
     position: fixed;
     inset: 0;
@@ -343,7 +368,326 @@ body {
     background: rgba(255,255,255,0.25);
 }
 
-/* ===== Dark Mode (跟随系统偏好) ===== */
+
+/* ==========================================================================
+   画廊
+   ========================================================================== */
+
+.gallery-header {
+    padding: 20px 24px 16px;
+    text-align: center;
+}
+.gallery-header h1 {
+    font-size: 1.1rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--color-text-light);
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    padding: 3px;
+}
+
+.gallery-cell {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    cursor: pointer;
+    background: #111;
+}
+
+.gallery-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease, filter 0.3s ease;
+}
+
+.gallery-cell:hover img {
+    transform: scale(1.06);
+    filter: brightness(0.45);
+}
+
+.gallery-cell-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    padding: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-cell:hover .gallery-cell-overlay {
+    opacity: 1;
+}
+
+.gallery-cell-title {
+    font-size: 0.78rem;
+    color: #f0ece4;
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+}
+
+/* Gallery Modal */
+.gallery-modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.94);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+}
+.gallery-modal-backdrop.open { display: flex; }
+
+.gallery-modal {
+    max-width: 800px;
+    width: 100%;
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+}
+
+@media (max-width: 600px) {
+    .gallery-modal { flex-direction: column; gap: 16px; }
+}
+
+.gallery-modal-img { flex: 1 1 55%; min-width: 0; }
+.gallery-modal-img img { width: 100%; border-radius: 2px; display: block; }
+
+.gallery-modal-text { flex: 1 1 40%; min-width: 0; padding-top: 4px; }
+.gallery-modal-date { font-size: 0.7rem; color: #666; letter-spacing: 0.08em; margin-bottom: 10px; text-transform: uppercase; }
+.gallery-modal-title { font-size: 1.15rem; font-weight: 400; color: #e8e4dc; line-height: 1.45; margin-bottom: 12px; }
+.gallery-modal-subtitle { font-size: 0.8rem; color: #999; font-style: italic; line-height: 1.5; margin-bottom: 14px; }
+.gallery-modal-content p { font-size: 0.85rem; color: #bbb; line-height: 1.75; margin-bottom: 8px; }
+
+.gallery-modal-close {
+    position: fixed; top: 20px; right: 24px;
+    font-size: 1.4rem; color: #666; cursor: pointer;
+    background: none; border: none; line-height: 1; transition: color 0.2s;
+    z-index: 201;
+}
+.gallery-modal-close:hover { color: #ddd; }
+
+.gallery-modal-nav {
+    position: fixed; top: 50%; transform: translateY(-50%);
+    font-size: 2rem; color: #444; cursor: pointer;
+    background: none; border: none; padding: 12px; transition: color 0.2s;
+    user-select: none;
+    z-index: 201;
+}
+.gallery-modal-nav:hover { color: #bbb; }
+.gallery-modal-nav.prev { left: 8px; }
+.gallery-modal-nav.next { right: 8px; }
+
+/* 画廊 view 背景（深色） */
+#view-gallery {
+    background: #0a0a0a;
+    color: #e8e4dc;
+    min-height: 100vh;
+}
+
+
+/* ==========================================================================
+   觉察页
+   ========================================================================== */
+
+.awareness-header {
+    text-align: center;
+    padding: 3rem 1.5rem 1rem;
+}
+.awareness-header h1 {
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: var(--color-accent);
+    margin-bottom: 0.4rem;
+}
+.awareness-subtitle {
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+    font-style: italic;
+}
+.awareness-date {
+    font-size: 0.78rem;
+    color: var(--color-text-light);
+    font-family: var(--font-serif-en);
+    margin-top: 0.5rem;
+}
+
+.awareness-canvas-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 1rem 1rem 0;
+}
+canvas#awareness-canvas {
+    max-width: 680px;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+}
+
+.awareness-dimensions {
+    max-width: 680px;
+    margin: 2rem auto;
+    padding: 0 1.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.dim-card {
+    border-top: 1px solid var(--color-border);
+    padding-top: 1.2rem;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.dim-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.dim-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    margin-bottom: 0.3rem;
+}
+.dim-name {
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--color-accent);
+}
+.dim-level {
+    font-size: 0.82rem;
+    color: var(--color-text-light);
+    font-family: var(--font-serif-en);
+}
+
+.dim-bar-bg {
+    width: 100%;
+    height: 4px;
+    background: var(--color-border);
+    border-radius: 2px;
+    margin: 0.6rem 0;
+    overflow: hidden;
+}
+.dim-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    width: 0%;
+    transition: width 1.5s ease;
+}
+
+.dim-desc {
+    font-size: 0.92rem;
+    color: var(--color-text);
+    line-height: 1.8;
+}
+.dim-note {
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    font-style: italic;
+    margin-top: 0.3rem;
+}
+
+.awareness-footer-note {
+    text-align: center;
+    padding: 1rem 1.5rem 3rem;
+    font-size: 0.82rem;
+    color: var(--color-text-light);
+    font-style: italic;
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+
+/* ==========================================================================
+   关于页
+   ========================================================================== */
+
+.about {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 6rem;
+}
+.about-emoji {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+}
+.about h1 {
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: var(--color-accent);
+    margin-bottom: 0.3rem;
+}
+.about-sub {
+    font-size: 0.88rem;
+    color: var(--color-text-light);
+    font-style: italic;
+    margin-bottom: 2rem;
+}
+.about p {
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+}
+.about-link {
+    display: inline-block;
+    margin-top: 2rem;
+    color: var(--color-accent);
+    text-decoration: none;
+    font-size: 0.88rem;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 2px;
+    transition: color 0.2s;
+}
+.about-link:hover { color: var(--color-text); }
+
+.readings {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+}
+.readings h2 {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--color-accent);
+    margin-bottom: 1rem;
+}
+.readings li {
+    margin-bottom: 0.5rem;
+    font-size: 0.92rem;
+    list-style: none;
+    padding-left: 0;
+}
+.readings li::before { content: "📖 "; }
+.readings .current::before { content: "🔖 "; }
+
+
+/* ==========================================================================
+   响应式
+   ========================================================================== */
+
+@media (max-width: 600px) {
+    .card-stream { padding: var(--spacing-md) var(--spacing-sm); }
+    .card-title { font-size: 1.25rem; }
+    .card-quote { font-size: 1rem; }
+    .awareness-header h1 { font-size: 1.3rem; }
+    .awareness-dimensions { padding: 0 1rem 2rem; }
+}
+
+
+/* ==========================================================================
+   Dark Mode
+   ========================================================================== */
+
 @media (prefers-color-scheme: dark) {
     :root {
         --color-bg: #1a1915;
@@ -380,4 +724,17 @@ body {
     .back-to-top:hover {
         box-shadow: 0 4px 12px rgba(0,0,0,0.45);
     }
+
+    /* 画廊在 dark mode 下保持深色 */
+    #view-gallery {
+        background: #0a0a0a;
+    }
+
+    /* 关于页 dark mode */
+    .about h1 { color: #c9a86a; }
+    .about-sub { color: #9a9489; }
+    .about-link { color: #c9a86a; }
+    .about-link:hover { color: #d4cfc7; }
+    .readings h2 { color: #c9a86a; }
+    .readings li { color: #d4cfc7; }
 }
